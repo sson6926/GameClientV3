@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.ltm.game_client_v3.views.HomeController"
+           stylesheets="@homeview.css"
+           prefWidth="1280" prefHeight="720">
+
+    <!-- 🌌 Background -->
+    <ImageView fx:id="backgroundImage" fitWidth="1280" fitHeight="720" preserveRatio="false">
+        <image>
+            <Image url="@../images/login-bg.jpg" />
+        </image>
+    </ImageView>
+
+    <!-- 🔹 Màn hình chính -->
+    <BorderPane style="-fx-background-color: rgba(0,0,0,0.45);">
+        <!-- Top bar -->
+        <top>
+            <BorderPane styleClass="top-bar">
+
+                <!-- 🔸 Left: sound button -->
+                <left>
+                    <Button fx:id="soundButton" text="🔊"
+                            onAction="#onSoundToggle" styleClass="icon-button"/>
+                </left>
+
+                <!-- 🔸 Center: welcome text -->
+                <center>
+                    <Label fx:id="welcomeLabel" text="Welcome, Player"
+                           styleClass="welcome-label"/>
+                </center>
+
+                <!-- 🔸 Right: logout button -->
+                <right>
+                    <Button fx:id="logoutButton" text="⏻ Logout"
+                            onAction="#onLogout" styleClass="logout-button"/>
+                </right>
+
+            </BorderPane>
+        </top>
+
+        <!-- Center content -->
+        <center>
+            <VBox alignment="CENTER" spacing="25">
+                <Label text="🎮 GAME PORTAL" styleClass="title"/>
+                <HBox spacing="20" alignment="CENTER">
+                    <Button fx:id="playButton" text="▶ PLAY" onAction="#onPlay"
+                            styleClass="primary-button"/>
+                    <Button fx:id="settingsButton" text="⚙ SETTINGS"
+                            styleClass="secondary-button"/>
+                </HBox>
+            </VBox>
+        </center>
+    </BorderPane>
+</StackPane>

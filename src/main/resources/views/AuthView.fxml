@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<StackPane xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.ltm.game_client_v3.views.AuthController"
+           stylesheets="@auth.css">
+
+    <!-- Background -->
+    <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">
+        <image>
+            <Image url="@../images/login-bg.jpg" />
+        </image>
+    </ImageView>
+
+    <!-- Container -->
+    <StackPane alignment="CENTER">
+
+        <!-- LOGIN PANE -->
+        <VBox fx:id="loginPane" alignment="CENTER" spacing="15" styleClass="login-box">
+            <Label text="🎮 GAME PORTAL" styleClass="game-title"/>
+
+            <TextField fx:id="loginUsername" promptText="Username" styleClass="input-field"/>
+            <PasswordField fx:id="loginPassword" promptText="Password" styleClass="input-field"/>
+
+            <Label fx:id="loginError" textFill="red" visible="false"/>
+
+            <Button text="LOGIN" onAction="#onLogin" styleClass="btn-primary"/>
+            <Hyperlink text="Create new account" onAction="#showRegister" styleClass="link-small"/>
+        </VBox>
+
+        <!-- REGISTER PANE -->
+        <VBox fx:id="registerPane" alignment="CENTER" spacing="15"
+              styleClass="login-box" visible="false">
+            <Label text="📝 REGISTER ACCOUNT" styleClass="game-title"/>
+
+            <TextField fx:id="regUsername" promptText="Username" styleClass="input-field"/>
+            <PasswordField fx:id="regPassword" promptText="Password" styleClass="input-field"/>
+            <PasswordField fx:id="regConfirm" promptText="Confirm Password" styleClass="input-field"/>
+
+            <Label fx:id="regError" textFill="red" visible="false"/>
+
+            <Button text="REGISTER" onAction="#onRegister" styleClass="btn-primary"/>
+            <Hyperlink text="← Back to Login" onAction="#showLogin" styleClass="link-small"/>
+        </VBox>
+
+    </StackPane>
+</StackPane>
