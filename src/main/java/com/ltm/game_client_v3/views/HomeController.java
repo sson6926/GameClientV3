@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import org.json.JSONObject;
 
 public class HomeController {
     private ClientManager clientManager;
@@ -52,7 +53,10 @@ public class HomeController {
 
     @FXML
     private void onLogout() {
+        JSONObject msg = new JSONObject();
+        msg.put("action", "LOGOUT_REQUEST");
+        clientManager.send(msg);
+        SoundManager.stopMusic();
+        clientManager.getViewManager().showAuth();
     }
-
-
 }

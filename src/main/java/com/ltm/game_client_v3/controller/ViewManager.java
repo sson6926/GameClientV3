@@ -56,6 +56,8 @@ public class ViewManager {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/HomeView.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);
+            homeController = loader.getController();
+            homeController.setClientManager(clientManager);
 
             Platform.runLater(() -> {
                 primaryStage.setScene(scene);
@@ -68,5 +70,5 @@ public class ViewManager {
         }
     }
     public AuthController getAuthController() { return authController; }
-    // public HomeController getHomeController() { return homeController; }
+    public HomeController getHomeController() { return homeController; }
 }
