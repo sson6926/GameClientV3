@@ -1,14 +1,22 @@
 package com.ltm.game_client_v3.views;
 
 import com.ltm.game_client_v3.controller.ClientManager;
+import com.ltm.game_client_v3.controller.SoundManager;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 public class HomeController {
     private ClientManager clientManager;
 
     @FXML private Label welcomeLabel;
     @FXML private Button soundButton;
+
+    @FXML
+    private ImageView soundIcon;
+    private Image soundOnImg;
+    private Image soundOffImg;
 
     private boolean soundOn = true;
 
@@ -17,13 +25,25 @@ public class HomeController {
     }
 
     @FXML
-    private void initialize() {
+    public void initialize() {
+        SoundManager.playBackgroundMusic();
+        soundOnImg = new Image(getClass().getResource("/images/sound-on.png").toExternalForm());
+        soundOffImg = new Image(getClass().getResource("/images/sound-off.png").toExternalForm());
+
+        soundIcon = new ImageView(soundOnImg);
+        soundIcon.setFitWidth(32);
+        soundIcon.setFitHeight(32);
+
+        soundButton.setGraphic(soundIcon);
+        soundButton.setStyle("-fx-background-color: transparent; -fx-cursor: hand;");
+        soundButton.setOnAction(e -> onSoundToggle());
     }
 
     @FXML
     private void onSoundToggle() {
-        soundOn = !soundOn;
-        soundButton.setText(soundOn ? "🔊" : "🔇");
+        SoundManager.toggleMute();
+        boolean muted = SoundManager.isMuted();
+        soundIcon.setImage(muted ? soundOffImg : soundOnImg);
     }
 
     @FXML

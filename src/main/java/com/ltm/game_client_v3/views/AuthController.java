@@ -5,6 +5,9 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 import org.json.JSONObject;
 
 public class AuthController {
@@ -19,9 +22,28 @@ public class AuthController {
     @FXML private Label loginError;
 
     @FXML private TextField regUsername;
+    @FXML private TextField regNickname;
     @FXML private PasswordField regPassword;
     @FXML private PasswordField regConfirm;
     @FXML private Label regError;
+
+    @FXML
+    private MediaView backgroundVideo;
+
+    private MediaPlayer mediaPlayer;
+
+    @FXML
+    public void initialize() {
+        String videoPath = getClass().getResource("/images/video_bg.mp4").toExternalForm();
+        Media media = new Media(videoPath);
+        mediaPlayer = new MediaPlayer(media);
+        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        mediaPlayer.setVolume(0);
+        mediaPlayer.setRate(0.5);
+        mediaPlayer.setAutoPlay(true);
+        mediaPlayer.play();
+        backgroundVideo.setMediaPlayer(mediaPlayer);
+    }
 
     public void setClientManager(ClientManager clientManager) {
         this.clientManager = clientManager;
@@ -42,12 +64,18 @@ public class AuthController {
             showRegisterError("Confirm password do not match!");
             return;
         }
-
-        JSONObject msg = new JSONObject();
-        msg.put("action", "REGISTER_REQUEST");
-        msg.put("username", regUsername.getText());
-        msg.put("password", regPassword.getText());
-        clientManager.send(msg);
+        else if(regPassword.getText().isEmpty() || regUsername.getText().isEmpty()) {
+            showRegisterError("Username or password must not be empty");
+            return;
+        }
+        else {
+            JSONObject msg = new JSONObject();
+            msg.put("action", "REGISTER_REQUEST");
+            msg.put("username", regUsername.getText());
+            msg.put("password", regPassword.getText());
+            msg.put("nickname", regNickname.getText());
+            clientManager.send(msg);
+        }
     }
 
     @FXML
@@ -57,7 +85,7 @@ public class AuthController {
     }
 
     @FXML
-    private void showLogin() {
+    public void showLogin() {
         registerPane.setVisible(false);
         loginPane.setVisible(true);
     }

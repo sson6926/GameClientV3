@@ -26,8 +26,7 @@
 
                 <!-- 🔸 Left: sound button -->
                 <left>
-                    <Button fx:id="soundButton" text="🔊"
-                            onAction="#onSoundToggle" styleClass="icon-button"/>
+                    <Button fx:id="soundButton" styleClass="icon-button" />
                 </left>
 
                 <!-- 🔸 Center: welcome text -->

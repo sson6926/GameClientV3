@@ -5,16 +5,20 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 
+<?import javafx.scene.media.MediaView?>
 <StackPane xmlns:fx="http://javafx.com/fxml"
            fx:controller="com.ltm.game_client_v3.views.AuthController"
            stylesheets="@auth.css">
 
     <!-- Background -->
-    <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">
-        <image>
-            <Image url="@../images/login-bg.jpg" />
-        </image>
-    </ImageView>
+<!--    <ImageView fitWidth="1280" fitHeight="720" preserveRatio="false">-->
+<!--        <image>-->
+<!--            <Image url="@../images/login-bg.jpg" />-->
+<!--        </image>-->
+<!--    </ImageView>-->
+
+    <MediaView fx:id="backgroundVideo" fitWidth="1280" fitHeight="720" preserveRatio="false" />
+
 
     <!-- Container -->
     <StackPane alignment="CENTER">
@@ -36,8 +40,8 @@
         <VBox fx:id="registerPane" alignment="CENTER" spacing="15"
               styleClass="login-box" visible="false">
             <Label text="📝 REGISTER ACCOUNT" styleClass="game-title"/>
-
             <TextField fx:id="regUsername" promptText="Username" styleClass="input-field"/>
+            <TextField fx:id="regNickname" promptText="Nickname" styleClass="input-field"/>
             <PasswordField fx:id="regPassword" promptText="Password" styleClass="input-field"/>
             <PasswordField fx:id="regConfirm" promptText="Confirm Password" styleClass="input-field"/>
 

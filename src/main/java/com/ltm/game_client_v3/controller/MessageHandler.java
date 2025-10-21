@@ -37,6 +37,7 @@ public class MessageHandler {
                 if ("success".equals(status)) {
                     if (authController != null)
                         authController.showNotify(msg.optString("message"));
+                        authController.showLogin();
                 } else {
                     if (authController != null)
                         authController.showRegisterError(msg.optString("message"));

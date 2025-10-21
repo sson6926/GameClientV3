@@ -43,7 +43,6 @@
     -fx-font-weight: bold;
     -fx-background-radius: 12;
     -fx-background-color: rgba(255,255,255,0.15);
-    -fx-border-color: rgba(255,255,255,0.4);
     -fx-text-fill: white;
     -fx-cursor: hand;
 }
@@ -84,6 +83,15 @@
     -fx-background-color: linear-gradient(to right, #0078FF, #00C6FF);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
+}
+
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-padding: 6;
+    -fx-cursor: hand;
+}
+.icon-button:hover {
+    -fx-opacity: 0.8;
 }
 
 /* 🔹 Icon + logout buttons */
