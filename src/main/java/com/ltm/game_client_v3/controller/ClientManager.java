@@ -19,7 +19,7 @@ public class ClientManager {
 
     // start nhận Stage từ JavaFX Application
     public void start(Stage primaryStage) {
-        socketManager = new SocketManager("172.30.158.197", 8989, this::onMessageReceived);
+        socketManager = new SocketManager("localhost", 8989, this::onMessageReceived);
         System.out.println("Starting client...");
         userManager = new UserManager();
         viewManager = new ViewManager(this, primaryStage);
@@ -37,6 +37,7 @@ public class ClientManager {
 
     public SocketManager getSocketManager() { return socketManager; }
     public UserManager getUserManager() { return userManager; }
+    public void setUserManager(UserManager userManager) { this.userManager = userManager; }
     public ViewManager getViewManager() { return viewManager; }
     public void send(JSONObject msg) { 
         if (socketManager != null) socketManager.send(msg); 

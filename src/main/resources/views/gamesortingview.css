@@ -1,0 +1,190 @@
+.root {
+    -fx-font-family: "Freckle Face", "Segoe UI", sans-serif;
+}
+
+/* 🔹 Background và container */
+.game-container {
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+}
+
+.room-info {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* 🔹 Player info panels */
+.player-panel {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-background-radius: 10;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 10;
+    -fx-padding: 10;
+}
+
+.player-title {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.player-stats {
+    -fx-text-fill: #DDD;
+    -fx-font-size: 14px;
+}
+
+/* 🔹 Score display */
+.score-display {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.current-score {
+    -fx-font-size: 48px;
+    -fx-font-weight: bold;
+}
+
+.score-positive {
+    -fx-text-fill: #00FF00;
+}
+
+.score-negative {
+    -fx-text-fill: #FF5555;
+}
+
+/* 🔹 Game zone */
+.game-zone {
+    -fx-background-color: rgba(255, 255, 255, 0.1);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.divider-line {
+    -fx-stroke: rgba(255, 255, 255, 0.5);
+    -fx-stroke-dash-array: 5 5;
+}
+
+/* 🔹 Number boxes */
+.number-box-top {
+    -fx-background-color: linear-gradient(to bottom, #B4DCFF, #8CB4FF);
+    -fx-background-radius: 8;
+    -fx-border-color: #5082C8;
+    -fx-border-radius: 8;
+    -fx-border-width: 2;
+    -fx-pref-width: 80;
+    -fx-pref-height: 60;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.number-box-bottom {
+    -fx-background-color: linear-gradient(to bottom, #FFF0B4, #FFDC8C);
+    -fx-background-radius: 8;
+    -fx-border-color: #78A0DC;
+    -fx-border-radius: 8;
+    -fx-border-width: 2;
+    -fx-pref-width: 80;
+    -fx-pref-height: 60;
+    -fx-alignment: CENTER;
+    -fx-cursor: hand;
+}
+
+.number-text {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-fill: #000000;
+}
+
+/* 🔹 Game info */
+.game-info {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.time-warning {
+    -fx-text-fill: #FF5555;
+}
+
+/* 🔹 Buttons */
+.game-button {
+    -fx-pref-width: 120;
+    -fx-pref-height: 50;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-cursor: hand;
+}
+
+.reset-button {
+    -fx-background-color: linear-gradient(to right, #FF6B6B, #FF8E8E);
+    -fx-text-fill: white;
+}
+
+.reset-button:hover {
+    -fx-background-color: linear-gradient(to right, #FF8E8E, #FF6B6B);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.send-button {
+    -fx-background-color: linear-gradient(to right, #4CAF50, #66BB6A);
+    -fx-text-fill: white;
+}
+
+.send-button:hover {
+    -fx-background-color: linear-gradient(to right, #66BB6A, #4CAF50);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.continue-button {
+    -fx-background-color: linear-gradient(to right, #2196F3, #42A5F5);
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-pref-width: 150;
+    -fx-pref-height: 60;
+}
+
+.continue-button:hover {
+    -fx-background-color: linear-gradient(to right, #42A5F5, #2196F3);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.exit-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-padding: 8;
+}
+
+.exit-button:hover {
+    -fx-text-fill: #FF5555;
+    -fx-scale-x: 1.1;
+    -fx-scale-y: 1.1;
+}
+
+/* 🔹 Countdown dialog */
+.countdown-dialog {
+    -fx-background-color: rgba(0, 0, 0, 0.8);
+    -fx-background-radius: 15;
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-border-radius: 15;
+    -fx-border-width: 2;
+}
+
+.countdown-text {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.instruction-text {
+    -fx-text-fill: #DDD;
+    -fx-font-size: 16px;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
