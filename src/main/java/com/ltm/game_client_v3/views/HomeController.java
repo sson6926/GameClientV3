@@ -469,9 +469,19 @@ public class HomeController implements Initializable {
                     resultEmoji = "😢";
                     color = "red";
                 } else {
-                    resultText = "🤝 DRAW";
-                    resultEmoji = "🤝";
-                    color = "orange";
+                    if (myTotalScore > opponentTotalScore) {
+                        resultText = "🏆 VICTORY!";
+                        resultEmoji = "🎉";
+                        color = "green";
+                    } else if (myTotalScore < opponentTotalScore) {
+                        resultText = "💔 DEFEAT";
+                        resultEmoji = "😢";
+                        color = "red";
+                    } else {
+                        resultText = "🤝 DRAW";
+                        resultEmoji = "🤝";
+                        color = "orange";
+                    }
                 }
 
                 // 📋 Tạo dialog
@@ -495,7 +505,7 @@ public class HomeController implements Initializable {
                 Label scoreLabel = new Label(String.format("Wins: %d - %d", myWins, opponentWins));
                 scoreLabel.setStyle("-fx-text-fill: white; -fx-font-size: 14px;");
 
-                Label totalScoreLabel = new Label(String.format("Total Points: %d - %d", myTotalScore, opponentTotalScore));
+                Label totalScoreLabel = new Label(String.format("Total Points: (%d) - (%d)", myTotalScore, opponentTotalScore));
                 totalScoreLabel.setStyle("-fx-text-fill: gray; -fx-font-size: 13px;");
 
                 content.getChildren().addAll(emojiLabel, titleLabel, scoreLabel, totalScoreLabel);

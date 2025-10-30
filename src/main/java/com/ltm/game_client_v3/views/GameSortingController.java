@@ -56,6 +56,7 @@ public class GameSortingController implements Initializable {
     // Game state và dialog management
     private Timeline gameTimer;
     private int remainingTime = 0;
+    private boolean gameInProgress = false;
     private boolean ascendingOrder = true;
     private List<NumberBox> topRowBoxes = new ArrayList<>();
     private List<NumberBox> bottomRowBoxes = new ArrayList<>();
@@ -90,6 +91,7 @@ public class GameSortingController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         setupGameZone();
         setupButtonStyles();
+        setupSound();
     }
     
     private void setupGameZone() {
@@ -122,6 +124,9 @@ public class GameSortingController implements Initializable {
             button.setScaleX(1.0);
             button.setScaleY(1.0);
         });
+    }
+    private void setupSound() {
+        SoundManager.stopMusic();;
     }
     
     private void populateGameData() {
@@ -491,15 +496,52 @@ public class GameSortingController implements Initializable {
 
    
     
-    @FXML
+  @FXML
     private void onExit() {
-        if (gameTimer != null) {
-            gameTimer.stop();
+        // ⚠️ Hiển thị hộp thoại xác nhận
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirm leaving the match!!");
+        alert.setHeaderText(null);
+        alert.setContentText("Are you sure you want to leave the match?");
+
+        ButtonType yesButton = new ButtonType("Leave", ButtonBar.ButtonData.OK_DONE);
+        ButtonType noButton = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(yesButton, noButton);
+
+        // Hiển thị và chờ người dùng chọn
+        Optional<ButtonType> result = alert.showAndWait();
+
+        if (result.isPresent() && result.get() == yesButton) {
+            // ✅ Người dùng xác nhận rời
+            if (gameTimer != null) {
+                gameTimer.stop();
+            }
+
+            if (gameInProgress) {
+                sendUserAnswer("QUIT");
+            } else {
+                try {
+                    JSONObject data = new JSONObject();
+                    data.put("matchId", gameData.getMatchId());
+                    data.put("userId", gameData.getSelf().getId());
+                    data.put("opponentId", gameData.getOpponent().getId());
+
+                    org.json.JSONObject msg = new org.json.JSONObject();
+                    msg.put("action", "QUIT_GAME");
+                    msg.put("data", data);
+
+                    clientManager.send(msg);
+                    System.out.println("Sent USER_ANSWER: " + msg);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+
+            clientManager.getViewManager().showHome();
         }
-        //closeCountdownDialog();
-        sendUserAnswer("QUIT");
-        clientManager.getViewManager().showHome();
+        // ❌ Nếu người dùng chọn "Hủy" thì không làm gì cả
     }
+
     
     private void sendUserAnswer(String status) {
         buttonGameNotStart();
@@ -749,11 +791,13 @@ public class GameSortingController implements Initializable {
        // closeCountdownDialog();
     }
     private void buttonGameStart() {
+        gameInProgress = true;
         resetButton.setDisable(false);
         sendButton.setDisable(false);
         continueButton.setDisable(true);
     }
     private void buttonGameNotStart() {
+        gameInProgress = false;
         resetButton.setDisable(true);
         sendButton.setDisable(true);
         continueButton.setDisable(false);
