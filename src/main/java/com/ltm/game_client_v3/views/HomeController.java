@@ -246,6 +246,26 @@ public class HomeController implements Initializable {
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 addMessage("Logging out...");
+
+                //gửi message logout lên server
+                JSONObject logoutMsg = new JSONObject();
+                logoutMsg.put("action", "LOGOUT_REQUEST");
+                clientManager.send(logoutMsg);
+
+                JSONObject requestJson = new org.json.JSONObject();
+                requestJson.put("action", "GET_ONLINE_USERS");
+                clientManager.send(requestJson);
+
+                //xóa user hiện tại
+                clientManager.getUserManager().setCurrentUser(null);
+
+                SoundManager.stopMusic();
+
+                //đóng socket nếu muốn
+                // clientManager.getSocketManager().stop();
+
+                //chuyển về màn hình đăng nhập
+                clientManager.getViewManager().showAuth();
             }
         });
     }

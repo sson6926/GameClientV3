@@ -34,7 +34,7 @@ public class MessageHandler {
                 if ("success".equals(status)) {
                     JSONObject userData = msg.optJSONObject("user");
                     System.out.println("Login successful for user: " +  userData.optString("nickname"));
-                    userManager.setCurrentUser(new User(userData.optString("nickname")));
+//                    userManager.setCurrentUser(new User(userData.optString("nickname")));
                     // Lấy đầy đủ thông tin user từ server
                     int id = userData.optInt("id");
                     String username = userData.optString("username");
@@ -46,7 +46,7 @@ public class MessageHandler {
                     // Tạo user với đầy đủ thông tin
                     User user = new User(id, username, nickname, totalMatches, totalWins, totalScore);
                     userManager.setCurrentUser(user);
-                    clientManager.setUserManager(userManager);
+//                    clientManager.setUserManager(userManager);
                     //viewManager.showGamePlay();
                     viewManager.showWelcome();
                 } else {
