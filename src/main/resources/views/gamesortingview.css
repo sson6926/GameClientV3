@@ -24,13 +24,13 @@
 
 .player-title {
     -fx-text-fill: white;
-    -fx-font-size: 16px;
+    -fx-font-size: 25px;
     -fx-font-weight: bold;
 }
 
 .player-stats {
     -fx-text-fill: #DDD;
-    -fx-font-size: 14px;
+    -fx-font-size: 20px;
 }
 
 /* 🔹 Score display */
@@ -41,16 +41,19 @@
 }
 
 .current-score {
-    -fx-font-size: 48px;
+    -fx-text-fill: #ffffd3;
+    -fx-font-size: 100px;
     -fx-font-weight: bold;
 }
 
 .score-positive {
     -fx-text-fill: #00FF00;
+    -fx-font-size: 24px;
 }
 
 .score-negative {
     -fx-text-fill: #FF5555;
+    -fx-font-size: 24px;
 }
 
 /* 🔹 Game zone */
@@ -121,17 +124,20 @@
 .reset-button {
     -fx-background-color: linear-gradient(to right, #FF6B6B, #FF8E8E);
     -fx-text-fill: white;
+    -fx-font-size: 16px;
 }
 
 .reset-button:hover {
     -fx-background-color: linear-gradient(to right, #FF8E8E, #FF6B6B);
     -fx-scale-x: 1.05;
     -fx-scale-y: 1.05;
+
 }
 
 .send-button {
     -fx-background-color: linear-gradient(to right, #4CAF50, #66BB6A);
     -fx-text-fill: white;
+    -fx-font-size: 16px;
 }
 
 .send-button:hover {

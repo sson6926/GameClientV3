@@ -191,24 +191,7 @@ public class MessageHandler {
             case "GAME_FINAL_RESULT" -> {
                 System.out.println("Received GAME_FINAL_RESULT: " + msg);
                 MatchSummary summary = MatchSummary.fromJson(msg);
-                HomeController homeController = viewManager.getHomeController();
-                if (homeController != null) {
-                    viewManager.showHome();
-                    homeController.showFinalMatchResult(summary);
-                } else{
-                    // Fallback: log chi tiết nếu không có view
-                    try {
-                        int matchId = msg.getInt("matchId");
-                        JSONObject player1 = msg.getJSONObject("player1");
-                        JSONObject player2 = msg.getJSONObject("player2");
-
-                        System.out.println("Match ID: " + matchId);
-                        System.out.println("Player1: " + player1);
-                        System.out.println("Player2: " + player2);
-                    } catch (Exception e) {
-                        System.err.println("Error parsing GAME_FINAL_RESULT: " + e.getMessage());
-                    }
-                }
+                viewManager.showMatchResult(summary);
                 
             }
 

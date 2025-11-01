@@ -1,10 +1,12 @@
 package com.ltm.game_client_v3.controller;
 
 import com.ltm.game_client_v3.models.GameData;
+import com.ltm.game_client_v3.models.MatchSummary;
 import com.ltm.game_client_v3.models.User;
 import com.ltm.game_client_v3.views.AuthController;
 import com.ltm.game_client_v3.views.GameSortingController;
 import com.ltm.game_client_v3.views.HomeController;
+import com.ltm.game_client_v3.views.MatchResultController;
 import com.ltm.game_client_v3.views.WelcomeController;
 
 import javafx.application.Platform;
@@ -104,6 +106,27 @@ public class ViewManager {
             Platform.runLater(() -> {
                 primaryStage.setScene(scene);
                 primaryStage.setTitle("Welcome");
+                primaryStage.show();
+            });
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    public void showMatchResult(MatchSummary matchSummary) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MatchResultView.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+
+            MatchResultController controller = loader.getController();
+            controller.setClientManager(clientManager);
+            controller.setCurrentUser(clientManager.getUserManager().getCurrentUser());
+            controller.setMatchSummary(matchSummary);
+
+            Platform.runLater(() -> {
+                primaryStage.setScene(scene);
+                primaryStage.setTitle("Match Results");
                 primaryStage.show();
             });
 

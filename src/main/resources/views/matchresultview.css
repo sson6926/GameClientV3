@@ -1,0 +1,207 @@
+.root {
+    -fx-font-family: "Freckle Face", "Segoe UI", sans-serif;
+}
+
+/* 🔹 Background */
+.result-container {
+    -fx-background-color: rgba(0, 0, 0, 0);
+}
+
+/* 🔹 Top bar */
+.top-bar {
+    -fx-background-color: rgba(0, 0, 0, 0.0);
+    -fx-padding: 10;
+}
+
+.title-label {
+    -fx-text-fill: white;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.8), 8, 0.5, 0, 2);
+}
+
+.home-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.3);
+    -fx-border-radius: 5;
+    -fx-padding: 8 15;
+}
+
+.home-button:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+/* 🔹 Main result box */
+.result-box {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(0, 198, 255, 0.5);
+    -fx-border-width: 3;
+    -fx-padding: 30;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 20, 0.5, 0, 5);
+}
+
+/* 🔹 Result header */
+.result-emoji {
+    -fx-font-size: 48px;
+    -fx-padding: 0 0 10 0;
+}
+
+.result-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+    -fx-padding: 5 20;
+    -fx-background-radius: 10;
+}
+
+.result-title.victory {
+    -fx-text-fill: #27ae60;
+    -fx-background-color: rgba(39, 174, 96, 0.1);
+    -fx-border-color: #27ae60;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+}
+
+.result-title.defeat {
+    -fx-text-fill: #e74c3c;
+    -fx-background-color: rgba(231, 76, 60, 0.1);
+    -fx-border-color: #e74c3c;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+}
+
+.result-title.draw {
+    -fx-text-fill: #f39c12;
+    -fx-background-color: rgba(243, 156, 18, 0.1);
+    -fx-border-color: #f39c12;
+    -fx-border-radius: 10;
+    -fx-border-width: 2;
+}
+
+/* 🔹 Score summary */
+.score-summary {
+    -fx-padding: 20 0;
+}
+
+.player-stats-box {
+    -fx-padding: 20;
+    -fx-background-color: rgba(248, 249, 250, 1);
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-pref-width: 180;
+}
+
+.player-name {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.stat-value {
+    -fx-font-size: 16px;
+    -fx-text-fill: #34495e;
+    -fx-font-weight: bold;
+}
+
+.stat-score {
+    -fx-font-size: 14px;
+    -fx-text-fill: #7f8c8d;
+}
+
+.vs-label {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #95a5a6;
+}
+
+.total-wins {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+    -fx-padding: 5 15;
+    -fx-background-color: rgba(52, 152, 219, 0.1);
+    -fx-background-radius: 8;
+}
+
+/* 🔹 Match details */
+.match-details {
+    -fx-padding: 20 0 0 0;
+}
+
+.details-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2c3e50;
+}
+
+.rounds-list {
+    -fx-background-color: rgba(248, 249, 250, 1);
+    -fx-border-color: rgba(0, 0, 0, 0.1);
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.rounds-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2c3e50;
+    -fx-font-size: 14px;
+    -fx-padding: 8 12;
+    -fx-border-color: transparent;
+}
+
+.rounds-list .list-cell:filled:hover {
+    -fx-background-color: rgba(52, 152, 219, 0.1);
+}
+
+.rounds-list .list-cell:filled:selected {
+    -fx-background-color: rgba(52, 152, 219, 0.2);
+}
+
+/* 🔹 Action buttons */
+.action-button {
+    -fx-pref-width: 160;
+    -fx-pref-height: 50;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 12;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.5, 0, 2);
+}
+
+.action-button.primary {
+    -fx-background-color: linear-gradient(to right, #27ae60, #2ecc71);
+    -fx-text-fill: white;
+}
+
+.action-button.primary:hover {
+    -fx-background-color: linear-gradient(to right, #229954, #27ae60);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+.action-button.secondary {
+    -fx-background-color: linear-gradient(to right, #3498db, #2980b9);
+    -fx-text-fill: white;
+}
+
+.action-button.secondary:hover {
+    -fx-background-color: linear-gradient(to right, #2980b9, #2471a3);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+}
+
+/* 🔹 Icon button (giống HomeView) */
+.icon-button {
+    -fx-background-color: transparent;
+    -fx-padding: 6;
+    -fx-cursor: hand;
+}
+
+.icon-button:hover {
+    -fx-opacity: 0.8;
+}

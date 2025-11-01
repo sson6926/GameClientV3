@@ -75,8 +75,8 @@ public class User {
             json.optInt("id"),
             json.optString("username"),
             json.optString("nickname"),
-            json.optInt("score"),
-            json.optInt("wins"),
+            json.optInt("totalScore"),
+            json.optInt("totalWins"),
             json.optInt("totalMatches")
         );
     }

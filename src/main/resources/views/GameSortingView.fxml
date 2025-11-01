@@ -8,11 +8,10 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Text?>
 
-<BorderPane xmlns:fx="http://javafx.com/fxml"
+<StackPane xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.ltm.game_client_v3.views.GameSortingController"
             stylesheets="@gamesortingview.css"
             prefWidth="1280" prefHeight="720"
-            style="-fx-background-color: rgba(0,0,0,0.45);"
             styleClass="game-container">
 
     <!-- 🌌 Background -->
@@ -25,94 +24,115 @@
     <Pane style="-fx-background-color: rgba(0,0,0,0.45);"/>
 
     <!-- 🔹 Main content -->
-    <center>
-        <HBox spacing="20" alignment="CENTER" style="-fx-padding: 20;">
-            <!-- Left: Game zone -->
-            <VBox spacing="15" prefWidth="800" alignment="TOP_CENTER">
-                <!-- Room info -->
-                <Label fx:id="roomIdLabel" text="ROOM ID: 0000" styleClass="room-info"/>
-                
-                <!-- Game info -->
-                <HBox spacing="30" alignment="CENTER">
-                    <Label fx:id="timeLabel" text="Time: 60s" styleClass="game-info"/>
-                    <Label fx:id="orderLabel" text="Order: ASCENDING" styleClass="game-info"/>
-                </HBox>
-
-                <!-- Game zone -->
-                <Pane fx:id="gameZone" prefWidth="750" prefHeight="500" styleClass="game-zone">
-                    <!-- Divider line - will be configured in controller -->
-                    <Line fx:id="dividerLine" stroke="rgba(255,255,255,0.5)"/>
+    <BorderPane styleClass="game-sorting-container">
+        <center>
+            <HBox spacing="20" alignment="CENTER" style="-fx-padding: 20;">
+                <!-- Left: Game zone -->
+                <VBox spacing="15" prefWidth="800" alignment="TOP_CENTER">
+                    <!-- Room info -->
+                    <Label fx:id="roomIdLabel" text="ROOM ID: 0000" styleClass="room-info"/>
                     
-                    <!-- Number boxes will be added programmatically -->
-                    <!-- Top row containers -->
-                    <VBox fx:id="topRowContainer" layoutY="30" spacing="10"/>
-                    
-                    <!-- Bottom row containers -->
-                    <VBox fx:id="bottomRowContainer" layoutY="350" spacing="10"/>
-                </Pane>
-
-                <!-- Game controls -->
-                <HBox spacing="20" alignment="CENTER">
-                    <Button fx:id="resetButton" text="Reset" styleClass="game-button reset-button" 
-                            onAction="#onReset"/>
-                    <Button fx:id="sendButton" text="Send Answer" styleClass="game-button send-button" 
-                            onAction="#onSendAnswer"/>
-                </HBox>
-            </VBox>
-
-            <!-- Right: Player info and controls -->
-            <VBox spacing="15" prefWidth="400" alignment="TOP_CENTER">
-                <!-- Player info -->
-                <HBox spacing="15" alignment="CENTER">
-                    <!-- Current player -->
-                    <VBox spacing="10" styleClass="player-panel" prefWidth="180">
-                        <Label text="YOU" styleClass="player-title"/>
-                        <ImageView fx:id="userAvatar" fitWidth="60" fitHeight="60" preserveRatio="true"/>
-                        <Label fx:id="userNickname" text="Player" styleClass="player-stats"/>
-                        <Label fx:id="userTotalMatches" text="Matches: 0" styleClass="player-stats"/>
-                        <Label fx:id="userWins" text="Wins: 0" styleClass="player-stats"/>
-                        <Label fx:id="userScore" text="Score: 0" styleClass="player-stats"/>
-                    </VBox>
-
-                    <!-- Opponent -->
-                    <VBox spacing="10" styleClass="player-panel" prefWidth="180">
-                        <Label text="OPPONENT" styleClass="player-title"/>
-                        <ImageView fx:id="opponentAvatar" fitWidth="60" fitHeight="60" preserveRatio="true"/>
-                        <Label fx:id="opponentNickname" text="Opponent" styleClass="player-stats"/>
-                        <Label fx:id="opponentTotalMatches" text="Matches: 0" styleClass="player-stats"/>
-                        <Label fx:id="opponentWins" text="Wins: 0" styleClass="player-stats"/>
-                        <Label fx:id="opponentScore" text="Score: 0" styleClass="player-stats"/>
-                    </VBox>
-                </HBox>
-
-                <!-- Current match info -->
-                <VBox spacing="10" styleClass="player-panel" alignment="CENTER">
-                    <Label text="CURRENT MATCH" styleClass="score-display"/>
-                    
-                    <!-- Score -->
+                    <!-- Game info -->
                     <HBox spacing="30" alignment="CENTER">
-                        <VBox alignment="CENTER">
-                            <Label fx:id="userCurrentScore" text="0" styleClass="current-score"/>
-                            <Label fx:id="userScoreChange" text="+0" styleClass="score-positive"/>
-                        </VBox>
+                        <Label fx:id="timeLabel" text="Time: 60s" styleClass="game-info"/>
+                        <Label fx:id="orderLabel" text="Order: ASCENDING" styleClass="game-info"/>
+                    </HBox>
+
+                    <!-- Game zone -->
+                    <Pane fx:id="gameZone" prefWidth="750" prefHeight="500" styleClass="game-zone">
+                        <!-- Divider line - will be configured in controller -->
+                        <Line fx:id="dividerLine" stroke="rgba(255,255,255,0.5)"/>
                         
-                        <Label text="-" styleClass="score-display"/>
+                        <!-- Number boxes will be added programmatically -->
+                        <!-- Top row containers -->
+                        <VBox fx:id="topRowContainer" layoutY="30" spacing="10"/>
                         
-                        <VBox alignment="CENTER">
-                            <Label fx:id="opponentCurrentScore" text="0" styleClass="current-score"/>
-                            <Label fx:id="opponentScoreChange" text="+0" styleClass="score-positive"/>
-                        </VBox>
+                        <!-- Bottom row containers -->
+                        <VBox fx:id="bottomRowContainer" layoutY="350" spacing="10"/>
+                    </Pane>
+
+                    <!-- Game controls -->
+                    <HBox spacing="20" alignment="CENTER">
+                        <Button fx:id="resetButton" text="Reset" styleClass="game-button reset-button" 
+                                onAction="#onReset"/>
+                        <Button fx:id="sendButton" text="Send Answer" styleClass="game-button send-button" 
+                                onAction="#onSendAnswer"/>
                     </HBox>
                 </VBox>
 
-                <!-- Game controls -->
-                <HBox spacing="15" alignment="CENTER">
-                    <Button fx:id="continueButton" text="Continue" styleClass="continue-button" 
-                            onAction="#onContinue"/>
-                    <Button fx:id="exitButton" text="⏻" styleClass="exit-button" 
-                            onAction="#onExit"/>
-                </HBox>
-            </VBox>
-        </HBox>
-    </center>
-</BorderPane>
+                <!-- Right: Player info and controls -->
+                <VBox spacing="15" prefWidth="400" alignment="TOP_CENTER">
+                    <!-- Player info -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <!-- Current player -->
+                        <VBox spacing="10" styleClass="player-panel" prefWidth="180">
+                            <Label text="YOU" styleClass="player-title"/>
+                            <StackPane alignment="CENTER">
+                                <ImageView fx:id="userAvatar"
+                                        fitWidth="60" fitHeight="60"
+                                        preserveRatio="true"
+                                        pickOnBounds="true">
+                                    <image>
+                                        <Image url="@../images/user1.jpg" />
+                                    </image>
+                                </ImageView>
+                            </StackPane>
+
+                            <Label fx:id="userNickname" text="Player" styleClass="player-stats"/>
+                            <Label fx:id="userTotalMatches" text="Matches: 0" styleClass="player-stats"/>
+                            <Label fx:id="userWins" text="Wins: 0" styleClass="player-stats"/>
+                            <Label fx:id="userScore" text="Score: 0" styleClass="player-stats"/>
+                        </VBox>
+
+                        <!-- Opponent -->
+                        <VBox spacing="10" styleClass="player-panel" prefWidth="180">
+                            <Label text="OPPONENT" styleClass="player-title"/>
+                        <StackPane alignment="CENTER">
+                                <ImageView fx:id="userAvatar"
+                                        fitWidth="60" fitHeight="60"
+                                        preserveRatio="true"
+                                        pickOnBounds="true">
+                                    <image>
+                                        <Image url="@../images/user2.jpg" />
+                                    </image>
+                                </ImageView>
+                            </StackPane>
+                            <Label fx:id="opponentNickname" text="Opponent" styleClass="player-stats"/>
+                            <Label fx:id="opponentTotalMatches" text="Matches: 0" styleClass="player-stats"/>
+                            <Label fx:id="opponentWins" text="Wins: 0" styleClass="player-stats"/>
+                            <Label fx:id="opponentScore" text="Score: 0" styleClass="player-stats"/>
+                        </VBox>
+                    </HBox>
+
+                    <!-- Current match info -->
+                    <VBox spacing="10" styleClass="player-panel" alignment="CENTER">
+                        <Label text="CURRENT MATCH" styleClass="score-display"/>
+                        
+                        <!-- Score -->
+                        <HBox spacing="30" alignment="CENTER">
+                            <VBox alignment="CENTER">
+                                <Label fx:id="userCurrentScore" text="0" styleClass="current-score"/>
+                                <Label fx:id="userScoreChange" text="+0" styleClass="score-positive"/>
+                            </VBox>
+                            
+                            <Label text="-" styleClass="score-display"/>
+                            
+                            <VBox alignment="CENTER">
+                                <Label fx:id="opponentCurrentScore" text="0" styleClass="current-score"/>
+                                <Label fx:id="opponentScoreChange" text="+0" styleClass="score-positive"/>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+
+                    <!-- Game controls -->
+                    <HBox spacing="15" alignment="CENTER">
+                        <Button fx:id="continueButton" text="Continue" styleClass="continue-button" 
+                                onAction="#onContinue"/>
+                        <Button fx:id="exitButton" text="⏻" styleClass="exit-button" 
+                                onAction="#onExit"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+        </center>
+    </BorderPane>
+</StackPane>

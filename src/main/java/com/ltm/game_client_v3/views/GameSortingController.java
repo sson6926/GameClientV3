@@ -138,11 +138,17 @@ public class GameSortingController implements Initializable {
             if (gameData.getSelf() != null) {
                 userNickname.setText(safeText(gameData.getSelf().getNickname(), "Player"));
                 userTotalMatches.setText("Matches: " + gameData.getSelf().getTotalMatches());
+                System.out.println("Self Wins: " + gameData.getSelf().getTotalWins());
+                userWins.setText("Wins: " + gameData.getSelf().getTotalWins());
+                System.out.println("Self Score: " + gameData.getSelf().getTotalScore());
+                userScore.setText("Score: " + gameData.getSelf().getTotalScore());
             }
             
             if (gameData.getOpponent() != null) {
                 opponentNickname.setText(safeText(gameData.getOpponent().getNickname(), "Opponent"));
                 opponentTotalMatches.setText("Matches: " + gameData.getOpponent().getTotalMatches());
+                opponentWins.setText("Wins: " + gameData.getOpponent().getTotalWins());
+                opponentScore.setText("Score: " + gameData.getOpponent().getTotalScore());
             }
            
             
@@ -321,6 +327,8 @@ public class GameSortingController implements Initializable {
                     handleTimeUp();
                 } else if (remainingTime <= 10) {
                     timeLabel.getStyleClass().add("time-warning");
+                } else {
+                    timeLabel.getStyleClass().removeAll("time-warning");
                 }
             })
         );
