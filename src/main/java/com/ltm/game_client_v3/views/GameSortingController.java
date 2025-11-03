@@ -527,10 +527,12 @@ public class GameSortingController implements Initializable {
             if (gameTimer != null) {
                 gameTimer.stop();
             }
-            showResultWaitingDialog();
+           
+           
 
             if (gameInProgress) {
                 sendUserAnswer("QUIT");
+                showResultWaitingDialog();
             } else {
                 try {
                     JSONObject data = new JSONObject();
@@ -544,12 +546,13 @@ public class GameSortingController implements Initializable {
 
                     clientManager.send(msg);
                     System.out.println("Sent USER_ANSWER: " + msg);
+                    clientManager.getViewManager().showHome();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
 
-            //clientManager.getViewManager().showHome();
+            
         }
         // ❌ Nếu người dùng chọn "Hủy" thì không làm gì cả
     }
