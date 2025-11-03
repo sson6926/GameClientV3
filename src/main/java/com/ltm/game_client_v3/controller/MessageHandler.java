@@ -191,6 +191,11 @@ public class MessageHandler {
             case "GAME_FINAL_RESULT" -> {
                 System.out.println("Received GAME_FINAL_RESULT: " + msg);
                 MatchSummary summary = MatchSummary.fromJson(msg);
+                  // Đóng dialog chờ kết quả nếu có
+                GameSortingController gameSortingController = viewManager.getGameSortingController();
+                if (gameSortingController != null) {
+                    gameSortingController.closeResultWaitingDialog();
+                }
                 viewManager.showMatchResult(summary);
                 
             }

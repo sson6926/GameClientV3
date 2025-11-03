@@ -115,6 +115,11 @@ public class ViewManager {
     }
     public void showMatchResult(MatchSummary matchSummary) {
         try {
+
+             // ĐÓNG TẤT CẢ DIALOG TRƯỚC KHI CHUYỂN SCENE
+            if (gameSortingController != null) {
+                gameSortingController.closeAllDialogs();
+            }
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/MatchResultView.fxml"));
             Parent root = loader.load();
             Scene scene = new Scene(root);

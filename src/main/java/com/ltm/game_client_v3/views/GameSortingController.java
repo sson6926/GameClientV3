@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.StageStyle;
 import javafx.util.Duration;
 import javafx.geometry.Insets;
 
@@ -62,6 +63,7 @@ public class GameSortingController implements Initializable {
     private List<NumberBox> bottomRowBoxes = new ArrayList<>();
     private Dialog<Void> currentCountdownDialog;
     private Dialog<Void> currentWaitingDialog;
+    private Dialog<Void> currentResultWaitingDialog;
 
     
     // Constants
@@ -370,6 +372,7 @@ public class GameSortingController implements Initializable {
                 Alert.AlertType.WARNING);
             sendUserAnswer("WRONG");
         }
+        continueButton.setDisable(true);
     }
     
     private boolean isSortedCorrectly() {
@@ -524,6 +527,7 @@ public class GameSortingController implements Initializable {
             if (gameTimer != null) {
                 gameTimer.stop();
             }
+            showResultWaitingDialog();
 
             if (gameInProgress) {
                 sendUserAnswer("QUIT");
@@ -545,9 +549,54 @@ public class GameSortingController implements Initializable {
                 }
             }
 
-            clientManager.getViewManager().showHome();
+            //clientManager.getViewManager().showHome();
         }
         // ❌ Nếu người dùng chọn "Hủy" thì không làm gì cả
+    }
+     private void showResultWaitingDialog() {
+        Platform.runLater(() -> {
+
+
+            Dialog<Void> waitingDialog = new Dialog<>();
+            waitingDialog.setTitle("Waiting for Final Result");
+            waitingDialog.setHeaderText("Please wait while we calculate the final match results...");
+            waitingDialog.getDialogPane().getStyleClass().add("waiting-dialog");
+
+            // Tạo progress indicator (dấu xoay vòng)
+            ProgressIndicator progressIndicator = new ProgressIndicator();
+            progressIndicator.setPrefSize(50, 50);
+                // Thêm nút để dialog hoạt động đúng
+            waitingDialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+
+            // Ẩn nút Close khỏi giao diện
+            Button closeButton = (Button) waitingDialog.getDialogPane().lookupButton(ButtonType.CLOSE);
+            closeButton.setVisible(false);
+            Label messageLabel = new Label("Processing match data...");
+            messageLabel.setStyle("-fx-text-fill: #666; -fx-font-size: 14px;");
+
+            VBox content = new VBox(20, progressIndicator, messageLabel);
+            content.setAlignment(Pos.CENTER);
+            content.setPadding(new Insets(20));
+            content.setStyle("-fx-background-color: white;");
+
+            waitingDialog.getDialogPane().setContent(content);
+            
+            // KHÔNG cho phép đóng bằng nút X hoặc ESC
+            waitingDialog.setResultConverter(buttonType -> null);
+            waitingDialog.initStyle(StageStyle.UTILITY);
+            waitingDialog.setResizable(false);
+
+            currentResultWaitingDialog = waitingDialog;
+            waitingDialog.show();
+        });
+    }
+    public void closeResultWaitingDialog() {
+        Platform.runLater(() -> {
+            if (currentResultWaitingDialog != null && currentResultWaitingDialog.isShowing()) {
+                fadeOutAndClose(currentResultWaitingDialog);
+                currentResultWaitingDialog = null;
+            }
+        });
     }
 
     
@@ -586,7 +635,7 @@ public class GameSortingController implements Initializable {
     }
     private void showMatchResultAlert() {
         if (matchSummary == null || gameData == null) return;
-        
+        continueButton.setDisable(false);
         Platform.runLater(() -> {
             try {
                 int currentUserId = gameData.getSelf().getId();
@@ -809,5 +858,29 @@ public class GameSortingController implements Initializable {
         resetButton.setDisable(true);
         sendButton.setDisable(true);
         continueButton.setDisable(false);
+    }
+        /**
+     * Đóng tất cả dialog đang mở
+     */
+    public void closeAllDialogs() {
+        Platform.runLater(() -> {
+            // Đóng dialog chờ kết quả
+            if (currentResultWaitingDialog != null && currentResultWaitingDialog.isShowing()) {
+                currentResultWaitingDialog.close();
+                currentResultWaitingDialog = null;
+            }
+            
+            // Đóng dialog chờ tiếp tục
+            if (currentWaitingDialog != null && currentWaitingDialog.isShowing()) {
+                currentWaitingDialog.close();
+                currentWaitingDialog = null;
+            }
+            
+            // Đóng dialog đếm ngược
+            if (currentCountdownDialog != null && currentCountdownDialog.isShowing()) {
+                currentCountdownDialog.close();
+                currentCountdownDialog = null;
+            }
+        });
     }
 }
