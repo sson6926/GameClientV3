@@ -26,8 +26,8 @@ public class ClientManager {
         messageHandler = new MessageHandler(this, userManager, viewManager);
 
         new Thread(socketManager).start();
-//        viewManager.showAuth();
-        viewManager.showHome();
+        viewManager.showAuth();
+//        viewManager.showHome();
     }
 
     private void onMessageReceived(JSONObject msg) {
