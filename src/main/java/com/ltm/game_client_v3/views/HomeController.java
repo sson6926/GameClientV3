@@ -18,6 +18,8 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -27,6 +29,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 import java.net.URL;
 import java.util.List;
@@ -224,7 +230,131 @@ public class HomeController implements Initializable {
             }
         });
     }
+    private void viewProfile(String nickname) {
+        // Tìm user được chọn từ danh sách
+        User selectedPlayer = onlinePlayersList.getItems().stream()
+                .filter(user -> user.getNickname().equals(nickname))
+                .findFirst()
+                .orElse(null);
+        
+        if (selectedPlayer == null) {
+            return;
+        }
+        
+        Platform.runLater(() -> {
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle("Player Profile");
+            dialog.setHeaderText(null);
 
+            // Tính win rate
+            double winRate = 0.0;
+            if (selectedPlayer.getTotalMatches() > 0) {
+                winRate = (double) selectedPlayer.getTotalWins() / selectedPlayer.getTotalMatches() * 100;
+            }
+
+            // Tạo giao diện profile
+            VBox content = new VBox(15);
+            content.setPadding(new Insets(20));
+            content.setAlignment(Pos.TOP_CENTER);
+            content.setStyle("-fx-background-color: linear-gradient(to bottom, #667eea 0%, #764ba2 100%); -fx-background-radius: 15;");
+
+            // Avatar/Icon
+            ImageView avatar = new ImageView(new Image(getClass().getResource("/images/avatar.png").toExternalForm()));
+            avatar.setFitWidth(80);
+            avatar.setFitHeight(80);
+            avatar.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);");
+
+            // Tên người chơi
+            Label nameLabel = new Label(selectedPlayer.getNickname());
+            nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 1);");
+
+            // Username
+            Label usernameLabel = new Label("@" + selectedPlayer.getUsername());
+            usernameLabel.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 14px;");
+
+            // Status
+            HBox statusBox = new HBox(10);
+            statusBox.setAlignment(Pos.CENTER);
+            
+            Label statusLabel = new Label();
+            statusLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 5 10 5 10; -fx-background-radius: 10;");
+            
+            if (selectedPlayer.isPlaying()) {
+                statusLabel.setText("🎮 IN GAME");
+                statusLabel.setStyle(statusLabel.getStyle() + "-fx-background-color: #ff6b6b;");
+            } else if (selectedPlayer.isOnline()) {
+                statusLabel.setText("🟢 ONLINE");
+                statusLabel.setStyle(statusLabel.getStyle() + "-fx-background-color: #51cf66;");
+            } else {
+                statusLabel.setText("⚫ OFFLINE");
+                statusLabel.setStyle(statusLabel.getStyle() + "-fx-background-color: #868e96;");
+            }
+
+            statusBox.getChildren().add(statusLabel);
+
+            // Thống kê - Grid layout
+            GridPane statsGrid = new GridPane();
+            statsGrid.setHgap(15);
+            statsGrid.setVgap(10);
+            statsGrid.setAlignment(Pos.CENTER);
+            statsGrid.setPadding(new Insets(10));
+
+            // Các chỉ số thống kê
+            String[] statLabels = {"📊 Total Matches", "🏆 Total Wins", "⭐ Total Score", "📈 Win Rate"};
+            String[] statValues = {
+                String.valueOf(selectedPlayer.getTotalMatches()),
+                String.valueOf(selectedPlayer.getTotalWins()),
+                String.valueOf(selectedPlayer.getTotalScore()),
+                String.format("%.1f%%", winRate)
+            };
+
+            for (int i = 0; i < statLabels.length; i++) {
+                Label label = new Label(statLabels[i]);
+                label.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 12px;");
+                
+                Label value = new Label(statValues[i]);
+                value.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;");
+                
+                statsGrid.add(label, 0, i);
+                statsGrid.add(value, 1, i);
+            }
+
+            // Progress bar cho win rate (thêm visual)
+            ProgressBar winRateBar = new ProgressBar(winRate / 100);
+            winRateBar.setPrefWidth(200);
+            winRateBar.setStyle("-fx-accent: " + getWinRateColor(winRate) + "; -fx-pref-height: 8px;");
+            
+            Label winRateText = new Label(String.format("Win Rate: %.1f%%", winRate));
+            winRateText.setStyle("-fx-text-fill: white; -fx-font-size: 11px;");
+
+            VBox winRateBox = new VBox(5, winRateBar, winRateText);
+            winRateBox.setAlignment(Pos.CENTER);
+
+            // Assemble content
+            content.getChildren().addAll(avatar, nameLabel, usernameLabel, statusBox, new Separator(), statsGrid, winRateBox);
+
+            dialog.getDialogPane().setContent(content);
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            
+            // Style cho dialog pane
+            dialog.getDialogPane().setStyle("-fx-background-color: transparent; -fx-border-color: #495057; -fx-border-width: 2; -fx-border-radius: 15;");
+            
+            // Ẩn nút Close mặc định và thay bằng custom button
+            Button closeButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.CLOSE);
+            closeButton.setText("Close");
+            closeButton.setStyle("-fx-background-color: #ff6b6b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 20 8 20;");
+
+            dialog.showAndWait();
+        });
+    }
+
+    // Helper method để chọn màu cho win rate
+    private String getWinRateColor(double winRate) {
+        if (winRate >= 70) return "#51cf66"; // Xanh lá - Cao
+        if (winRate >= 50) return "#ffd43b"; // Vàng - Trung bình
+        if (winRate >= 30) return "#ff922b"; // Cam - Thấp
+        return "#ff6b6b"; // Đỏ - Rất thấp
+    }
     private void updateWelcomeMessage() {
         if (currentUser != null) {
             welcomeLabel.setText("Welcome, " + currentUser.getNickname() + "!");
@@ -291,14 +421,6 @@ public class HomeController implements Initializable {
         inviteMsg.put("action", "INVITE_USER_TO_GAME");
         inviteMsg.put("targetUsername", username);
         clientManager.send(inviteMsg);
-    }
-
-    private void viewProfile(String nickname) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Player Profile");
-        alert.setHeaderText("Profile: " + nickname);
-        alert.setContentText("Player profile feature coming soon!\n\nMore statistics and achievements will be available in future updates.");
-        alert.showAndWait();
     }
 
     private void sendMessage(String playerName) {
@@ -552,6 +674,7 @@ public class HomeController implements Initializable {
             }
         });
     }
+   
 
 
 }

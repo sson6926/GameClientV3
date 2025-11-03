@@ -30,6 +30,16 @@ public class User {
         this.isOnline = isOnline;
         this.isPlaying = isPlaying;
     }
+    public User(int id,String username, String nickname, boolean isOnline, boolean isPlaying, int total_matches,int total_wins, int total_score) {
+        this.id = id;
+        this.username = username;
+        this.nickname = nickname;
+        this.isOnline = isOnline;
+        this.isPlaying = isPlaying;
+        this.totalMatches = total_matches;
+        this.totalWins = total_wins;
+        this.totalScore = total_score;
+    }
 
     public User(String username, String password) {
         this.username = username;
