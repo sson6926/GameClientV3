@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.ltm.game_client_v3.views.ScoreboardController"
+            prefHeight="500.0" prefWidth="700.0"
+            style="-fx-background-color: linear-gradient(to bottom, #0a0f1f, #001f3f);">
+
+    <VBox spacing="15" alignment="CENTER"
+          AnchorPane.topAnchor="20" AnchorPane.leftAnchor="20"
+          AnchorPane.rightAnchor="20" AnchorPane.bottomAnchor="20">
+        <Label text="🏆 SCOREBOARD"
+               style="-fx-text-fill: linear-gradient(to right, #00C6FF, #0078FF);
+                      -fx-font-size: 26px;
+                      -fx-font-weight: bold;"/>
+
+        <TableView fx:id="scoreTable" prefWidth="660" prefHeight="400"
+                   style="-fx-background-color: rgba(255,255,255,0.05);
+                          -fx-border-color: rgba(255,255,255,0.2);
+                          -fx-border-radius: 10;
+                          -fx-background-radius: 10;">
+            <columns>
+                <TableColumn fx:id="colRank" text="#" prefWidth="50"/>
+                <TableColumn fx:id="colNickname" text="Nickname" prefWidth="200"/>
+                <TableColumn fx:id="colWins" text="Wins" prefWidth="100"/>
+                <TableColumn fx:id="colMatches" text="Matches" prefWidth="120"/>
+                <TableColumn fx:id="colScore" text="Score" prefWidth="160"/>
+            </columns>
+        </TableView>
+
+        <Button text="Close" onAction="#onClose"
+                style="-fx-pref-width: 140;
+                       -fx-pref-height: 40;
+                       -fx-background-radius: 10;
+                       -fx-background-color: linear-gradient(to right, #0078FF, #00C6FF);
+                       -fx-text-fill: white;
+                       -fx-font-weight: bold;"/>
+    </VBox>
+</AnchorPane>

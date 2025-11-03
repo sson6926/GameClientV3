@@ -11,6 +11,7 @@ import com.ltm.game_client_v3.views.HomeController;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.application.Platform;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -199,6 +200,13 @@ public class MessageHandler {
                 viewManager.showMatchResult(summary);
                 
             }
+
+            case "GET_RANKING_RESPONSE" -> {
+                JSONArray rankingArray = msg.getJSONArray("ranking");
+                HomeController homeController = viewManager.getHomeController();
+                Platform.runLater(() -> homeController.openScoreboardPopup(rankingArray));
+            }
+
 
             
             default -> System.out.println("Unknown message type: " + action);

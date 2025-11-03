@@ -10,9 +10,11 @@ import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.css.Match;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -28,10 +30,12 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class HomeController implements Initializable {
@@ -230,6 +234,42 @@ public class HomeController implements Initializable {
             welcomeLabel.setText("Welcome, " + currentUser.getNickname() + "!");
         }
     }
+
+    @FXML
+    private void onScoreboard() {
+        addMessage("Scoreboard clicked");
+        JSONObject data = new JSONObject();
+        data.put("action", "GET_RANKING_REQUEST");
+        clientManager.send(data);
+
+    }
+
+    public void openScoreboardPopup(JSONArray rankingArray) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/ScoreboardView.fxml"));
+            Parent root = loader.load();
+
+            // Lấy controller để truyền dữ liệu vào
+            ScoreboardController controller = loader.getController();
+            controller.setRanking(rankingArray);
+
+            Stage stage = new Stage();
+            stage.setTitle("Scoreboard");
+            stage.setScene(new Scene(root));
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void onHistory() {
+        addMessage("History clicked");
+    }
+
+
 
     @FXML
     private void onPlay() {
