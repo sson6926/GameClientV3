@@ -58,6 +58,8 @@ public class HomeController implements Initializable {
     private Image soundOffImg;
      @FXML
     private MediaView backgroundVideo;
+      @FXML
+    private ImageView backgroundImage;
 
     private MediaPlayer mediaPlayer;
 
@@ -110,6 +112,7 @@ public class HomeController implements Initializable {
             
             mediaPlayer.setOnError(() -> {
                 System.err.println("Video error: " + mediaPlayer.getError());
+                showBackgroundImage();
             });
             
             backgroundVideo.setMediaPlayer(mediaPlayer);
@@ -117,6 +120,38 @@ public class HomeController implements Initializable {
         } catch (Exception e) {
             System.err.println("Video initialization failed: " + e.getMessage());
             e.printStackTrace();
+            showBackgroundImage();
+        }
+    }
+    private void showBackgroundImage() {
+        try {
+            // Load ảnh nền thay thế
+            Image bgImage = new Image(getClass().getResource("/images/login-bg.jpg").toExternalForm());
+            
+            // Nếu có ImageView từ FXML, sử dụng nó
+            if (backgroundImage != null) {
+                backgroundImage.setImage(bgImage);
+                backgroundImage.setVisible(true);
+            } else {
+                // Nếu không có, tạo mới và thêm vào scene
+                backgroundImage = new ImageView(bgImage);
+                backgroundImage.setPreserveRatio(true);
+                backgroundImage.setFitWidth(backgroundVideo.getScene().getWidth());
+                backgroundImage.setFitHeight(backgroundVideo.getScene().getHeight());
+                
+                // Thêm ảnh nền vào cùng container với video
+                if (backgroundVideo.getParent() != null) {
+                    ((javafx.scene.Parent) backgroundVideo.getParent()).getChildrenUnmodifiable().add(backgroundImage);
+                }
+            }
+            
+            // Ẩn video
+            backgroundVideo.setVisible(false);
+            System.out.println("Showing background image instead of video");
+            
+        } catch (Exception e) {
+            System.err.println("Failed to load background image: " + e.getMessage());
+
         }
     }
 

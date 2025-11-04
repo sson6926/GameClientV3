@@ -15,6 +15,8 @@
 
   <!-- 🌌 Background -->
     <MediaView fx:id="backgroundVideo" fitWidth="1280" fitHeight="720" preserveRatio="false" />
+    <ImageView fx:id="backgroundImage" fitWidth="1280" fitHeight="720" preserveRatio="false"/>
+
 
     <!-- 🔹 Lớp phủ làm tối background (giống WelcomeView) -->
     <Pane style="-fx-background-color: rgba(0,0,0,0.45);"/>
