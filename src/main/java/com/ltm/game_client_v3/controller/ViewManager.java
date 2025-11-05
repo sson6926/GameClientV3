@@ -72,6 +72,8 @@ public class ViewManager {
             Scene scene = new Scene(root);
             homeController = loader.getController();
             homeController.setClientManager(clientManager);
+
+            homeController.setupAfterClientManager();
                 // Debug current user
             User currentUser = clientManager.getUserManager().getCurrentUser();
             System.out.println("ViewManager - Current user: " + 

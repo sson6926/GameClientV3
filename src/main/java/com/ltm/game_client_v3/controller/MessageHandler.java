@@ -8,6 +8,7 @@ import com.ltm.game_client_v3.views.AuthController;
 import com.ltm.game_client_v3.views.GameSortingController;
 import com.ltm.game_client_v3.views.HomeController;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -209,8 +210,71 @@ public class MessageHandler {
                 Platform.runLater(() -> homeController.openScoreboardPopup(rankingArray));
             }
 
+            case "GET_MATCH_HISTORY_RESPONSE" -> {
+                String status = msg.optString("status");
+                System.out.println("GET_MATCH_HISTORY_RESPONSE received: " + status);
 
-            
+                if ("success".equals(status)) {
+                    JSONArray matchHistoryArray = msg.getJSONArray("matchHistory");
+                    int totalMatches = msg.optInt("totalMatches");
+
+                    System.out.println("Received " + totalMatches + " matches from server");
+
+                    // Convert JSONArray thành List<MatchHistory>
+                    List<com.ltm.game_client_v3.models.MatchHistory> matchHistoryList = new ArrayList<>();
+
+                    for (int i = 0; i < matchHistoryArray.length(); i++) {
+                        JSONObject matchObj = matchHistoryArray.optJSONObject(i);
+                        if (matchObj != null) {
+                            int matchId = matchObj.optInt("matchId");
+                            String opponentUsername = matchObj.optString("opponentUsername");
+                            String opponentNickname = matchObj.optString("opponentNickname");
+                            String result = matchObj.optString("result");
+                            int userTotalScore = matchObj.optInt("userTotalScore");
+                            int opponentTotalScore = matchObj.optInt("opponentTotalScore");
+                            int roundCount = matchObj.optInt("roundCount");
+
+                            LocalDateTime startTime = null;
+                            LocalDateTime endTime = null;
+                            try {
+                                String startTimeStr = matchObj.optString("startTime");
+                                String endTimeStr = matchObj.optString("endTime");
+                                if (startTimeStr != null && !startTimeStr.equals("null")) {
+                                    startTime = LocalDateTime.parse(startTimeStr);
+                                }
+                                if (endTimeStr != null && !endTimeStr.equals("null")) {
+                                    endTime = LocalDateTime.parse(endTimeStr);
+                                }
+                            } catch (Exception e) {
+                                System.err.println("Error parsing dates: " + e.getMessage());
+                            }
+
+                            com.ltm.game_client_v3.models.MatchHistory history =
+                                    new com.ltm.game_client_v3.models.MatchHistory(
+                                            matchId, opponentUsername, opponentNickname, result,
+                                            userTotalScore, opponentTotalScore, startTime, endTime, roundCount
+                                    );
+
+                            matchHistoryList.add(history);
+                            System.out.println("✓ " + history);
+                        }
+                    }
+
+                    // ✅ THÊM DÒNG NÀY - Gọi updateMatchHistory để hiển thị dialog
+                    HomeController homeController = viewManager.getHomeController();
+                    if (homeController != null) {
+                        Platform.runLater(() -> homeController.updateMatchHistory(matchHistoryList));
+                    } else {
+                        System.err.println("⚠️ HomeController is null, cannot display history");
+                    }
+                } else {
+                    System.err.println("GET_MATCH_HISTORY_RESPONSE error: " + msg.optString("message"));
+                }
+            }
+
+
+
+
             default -> System.out.println("Unknown message type: " + action);
         }
     }

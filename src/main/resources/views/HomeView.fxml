@@ -64,8 +64,11 @@
                         <HBox spacing="20" alignment="CENTER">
                         <Button fx:id="scoreboardButton" text="Scoreboard" onAction="#onScoreboard"
                                 styleClass="primary-button"/>
-                        <Button fx:id="historyButton" text="History"
+<!--                        <Button fx:id="historyButton" text="History"-->
+<!--                                styleClass="primary-button"/>-->
+                        <Button fx:id="historyButton" text="History" onAction="#onHistoryClicked"
                                 styleClass="primary-button"/>
+
                         </HBox>
                     </VBox>
 
