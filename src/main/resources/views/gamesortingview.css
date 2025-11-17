@@ -56,48 +56,70 @@
     -fx-font-size: 24px;
 }
 
-/* 🔹 Game zone */
+/* 🔹 Game zone responsive */
 .game-zone {
     -fx-background-color: rgba(255, 255, 255, 0.1);
     -fx-border-color: rgba(255, 255, 255, 0.3);
     -fx-border-radius: 10;
     -fx-background-radius: 10;
+    -fx-padding: 15;
+    -fx-min-width: 400px;
+    -fx-pref-width: 750px;
+    -fx-max-width: 800px;
+}
+.row-label {
+    -fx-text-fill: rgba(255, 255, 255, 0.8);
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 10 0;
 }
 
 .divider-line {
     -fx-stroke: rgba(255, 255, 255, 0.5);
     -fx-stroke-dash-array: 5 5;
 }
-
-/* 🔹 Number boxes */
-.number-box-top {
-    -fx-background-color: linear-gradient(to bottom, #B4DCFF, #8CB4FF);
+/* 🔹 Number boxes responsive */
+.number-box-top, .number-box-bottom {
     -fx-background-radius: 8;
-    -fx-border-color: #5082C8;
     -fx-border-radius: 8;
     -fx-border-width: 2;
-    -fx-pref-width: 80;
-    -fx-pref-height: 60;
+    -fx-pref-width: 70px;
+    -fx-pref-height: 50px;
+    -fx-min-width: 50px;
+    -fx-min-height: 40px;
+    -fx-max-width: 70px;
+    -fx-max-height: 50px;
     -fx-alignment: CENTER;
     -fx-cursor: hand;
+}
+.number-box-top {
+    -fx-background-color: linear-gradient(to bottom, #B4DCFF, #8CB4FF);
+    -fx-border-color: #5082C8;
 }
 
 .number-box-bottom {
     -fx-background-color: linear-gradient(to bottom, #FFF0B4, #FFDC8C);
-    -fx-background-radius: 8;
     -fx-border-color: #78A0DC;
-    -fx-border-radius: 8;
-    -fx-border-width: 2;
-    -fx-pref-width: 80;
-    -fx-pref-height: 60;
-    -fx-alignment: CENTER;
-    -fx-cursor: hand;
 }
 
 .number-text {
     -fx-font-size: 20px;
     -fx-font-weight: bold;
     -fx-fill: #000000;
+}
+/* 🔹 Wrapping flow pane */
+.number-flow-pane {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+    -fx-alignment: CENTER;
+    -fx-padding: 10;
+}
+/* 🔹 FlowPane responsive */
+.flow-pane {
+    -fx-hgap: 8;
+    -fx-vgap: 8;
+    -fx-alignment: CENTER;
+    -fx-padding: 10;
 }
 
 /* 🔹 Game info */
@@ -193,4 +215,32 @@
     -fx-font-size: 16px;
     -fx-wrap-text: true;
     -fx-text-alignment: center;
+}
+/* Thêm media queries cho responsive */
+@media (max-width: 1000px) {
+    .game-zone {
+        -fx-min-width: 500px;
+        -fx-pref-width: 600px;
+    }
+    
+    .number-box-top, .number-box-bottom {
+        -fx-pref-width: 60px;
+        -fx-pref-height: 45px;
+    }
+}
+
+@media (max-width: 800px) {
+    .game-zone {
+        -fx-min-width: 400px;
+        -fx-pref-width: 500px;
+    }
+    
+    .number-box-top, .number-box-bottom {
+        -fx-pref-width: 55px;
+        -fx-pref-height: 40px;
+    }
+    
+    .number-text {
+        -fx-font-size: 14px;
+    }
 }

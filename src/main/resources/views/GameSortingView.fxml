@@ -39,17 +39,25 @@
                     </HBox>
 
                     <!-- Game zone -->
-                    <Pane fx:id="gameZone" prefWidth="750" prefHeight="500" styleClass="game-zone">
-                        <!-- Divider line - will be configured in controller -->
-                        <Line fx:id="dividerLine" stroke="rgba(255,255,255,0.5)"/>
+                    <VBox fx:id="gameZone" prefWidth="750" prefHeight="500" styleClass="game-zone" spacing="20">
+                        <!-- Top row with wrapping -->
+                        <VBox VBox.vgrow="ALWAYS" alignment="TOP_CENTER">
+                            <Label text="DRAG NUMBERS FROM HERE" styleClass="row-label"/>
+                            <FlowPane fx:id="topRowContainer" hgap="10" vgap="10" 
+                                    alignment="CENTER" prefWrapLength="700"/>
+                        </VBox>
                         
-                        <!-- Number boxes will be added programmatically -->
-                        <!-- Top row containers -->
-                        <VBox fx:id="topRowContainer" layoutY="30" spacing="10"/>
+                        <!-- Divider line -->
+                        <Line fx:id="dividerLine" stroke="rgba(255,255,255,0.5)" strokeWidth="2" 
+                            strokeDashArray="5,5"/>
                         
-                        <!-- Bottom row containers -->
-                        <VBox fx:id="bottomRowContainer" layoutY="350" spacing="10"/>
-                    </Pane>
+                        <!-- Bottom row with wrapping -->
+                        <VBox VBox.vgrow="ALWAYS" alignment="TOP_CENTER">
+                            <Label text="DROP NUMBERS HERE TO SORT" styleClass="row-label"/>
+                            <FlowPane fx:id="bottomRowContainer" hgap="10" vgap="10" 
+                                    alignment="CENTER" prefWrapLength="700"/>
+                        </VBox>
+                    </VBox>
 
                     <!-- Game controls -->
                     <HBox spacing="20" alignment="CENTER">
@@ -84,11 +92,12 @@
                             <Label fx:id="userScore" text="Score: 0" styleClass="player-stats"/>
                         </VBox>
 
-                        <!-- Opponent -->
+                       <!-- Opponent -->
                         <VBox spacing="10" styleClass="player-panel" prefWidth="180">
                             <Label text="OPPONENT" styleClass="player-title"/>
-                        <StackPane alignment="CENTER">
-                                <ImageView fx:id="userAvatar"
+                            <StackPane alignment="CENTER">
+                                <!-- SỬA: đổi thành fx:id="opponentAvatar" -->
+                                <ImageView fx:id="opponentAvatar"
                                         fitWidth="60" fitHeight="60"
                                         preserveRatio="true"
                                         pickOnBounds="true">
