@@ -85,7 +85,7 @@ public class MessageHandler {
                             boolean isPlaying = userObj.optBoolean("isPlaying");
                             int totalMatches = userObj.getInt("totalMatches");
                             int totalWins = userObj.getInt("totalWins");
-                            int totalScore = userObj.getInt("totalMatches");                            
+                            int totalScore = userObj.getInt("totalScore");
                             if (!username.equals(this.userManager.getCurrentUser().getUsername())) {
                                 User user = new User(id,username, nickname, isOnline, isPlaying,totalMatches,totalWins,totalScore);
                                 usersList.add(user);
