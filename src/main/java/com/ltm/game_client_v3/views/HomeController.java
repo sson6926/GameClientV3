@@ -38,6 +38,7 @@ import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -965,10 +966,11 @@ public class HomeController implements Initializable {
         TableColumn<MatchHistory, String> dateCol = new TableColumn<>("Date");
         dateCol.setPrefWidth(200);
         dateCol.setMinWidth(180);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
         dateCol.setCellValueFactory(cellData -> {
             if (cellData.getValue().getStartTime() != null) {
                 return new javafx.beans.property.SimpleStringProperty(
-                        cellData.getValue().getStartTime().toString()
+                        cellData.getValue().getStartTime().format(dateFormatter)
                 );
             }
             return new javafx.beans.property.SimpleStringProperty("—");
