@@ -61,14 +61,50 @@
                                       editable="false" wrapText="true"/>
                         </VBox>
 
-                        <HBox spacing="20" alignment="CENTER">
-                        <Button fx:id="scoreboardButton" text="Scoreboard" onAction="#onScoreboard"
-                                styleClass="primary-button"/>
-<!--                        <Button fx:id="historyButton" text="History"-->
+<!--                        <HBox spacing="20" alignment="CENTER">-->
+<!--                        <Button fx:id="scoreboardButton" text="Scoreboard" onAction="#onScoreboard"-->
 <!--                                styleClass="primary-button"/>-->
-                        <Button fx:id="historyButton" text="History" onAction="#onHistoryClicked"
-                                styleClass="primary-button"/>
+<!--&lt;!&ndash;                        <Button fx:id="historyButton" text="History"&ndash;&gt;-->
+<!--&lt;!&ndash;                                styleClass="primary-button"/>&ndash;&gt;-->
+<!--                        <Button fx:id="historyButton" text="History" onAction="#onHistoryClicked"-->
+<!--                                styleClass="primary-button"/>-->
+<!--                            <Button text="Create Room" onAction="#onCreateRoom" styleClass="btn-primary"/>-->
+<!--                            <Button text="Join Room" onAction="#onJoinRoom" styleClass="btn-success"/>-->
 
+<!--                        </HBox>-->
+
+                        <HBox spacing="15" alignment="CENTER" style="-fx-padding: 20 0 0 0;">
+                            <!-- Scoreboard Button -->
+                            <VBox styleClass="action-button-card scoreboard-card"
+                                  alignment="CENTER" spacing="8"
+                                  onMouseClicked="#onScoreboard">
+                                <Label text="🏆" styleClass="action-icon"/>
+                                <Label text="Scoreboard" styleClass="action-title"/>
+                            </VBox>
+
+                            <!-- History Button -->
+                            <VBox styleClass="action-button-card history-card"
+                                  alignment="CENTER" spacing="8"
+                                  onMouseClicked="#onHistoryClicked">
+                                <Label text="📜" styleClass="action-icon"/>
+                                <Label text="History" styleClass="action-title"/>
+                            </VBox>
+
+                            <!-- Create Room Button -->
+                            <VBox styleClass="action-button-card create-room-card"
+                                  alignment="CENTER" spacing="8"
+                                  onMouseClicked="#onCreateRoom">
+                                <Label text="➕" styleClass="action-icon-large"/>
+                                <Label text="Create Room" styleClass="action-title-large"/>
+                            </VBox>
+
+                            <!-- Join Room Button -->
+                            <VBox styleClass="action-button-card join-room-card"
+                                  alignment="CENTER" spacing="8"
+                                  onMouseClicked="#onJoinRoom">
+                                <Label text="🚪" styleClass="action-icon-large"/>
+                                <Label text="Join Room" styleClass="action-title-large"/>
+                            </VBox>
                         </HBox>
                     </VBox>
 

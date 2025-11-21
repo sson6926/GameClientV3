@@ -4,6 +4,7 @@ import com.ltm.game_client_v3.controller.ClientManager;
 import com.ltm.game_client_v3.controller.SoundManager;
 import com.ltm.game_client_v3.models.MatchHistory;
 import com.ltm.game_client_v3.models.MatchSummary;
+import com.ltm.game_client_v3.models.Room;
 import com.ltm.game_client_v3.models.User;
 
 import javafx.animation.FadeTransition;
@@ -71,6 +72,18 @@ public class HomeController implements Initializable {
 
     @FXML private Button historyButton;
 
+    @FXML
+    private VBox scoreboardCard;
+
+    @FXML
+    private VBox historyCard;
+
+    @FXML
+    private VBox createRoomCard;
+
+    @FXML
+    private VBox joinRoomCard;
+
     private boolean soundOn = true;
 
     // Context menu và dialog management
@@ -78,6 +91,10 @@ public class HomeController implements Initializable {
     private Dialog<Void> currentWaitingDialog;
     private Alert currentInviteDialog;
     private String currentInviteTarget; // Lưu username đang mời
+
+    // Thêm join phòng
+    private Stage roomDialogStage;
+    private Room currentRoom;
 
     public void setClientManager(ClientManager clientManager) {
         this.clientManager = clientManager;
@@ -96,6 +113,21 @@ public class HomeController implements Initializable {
         setupContextMenu();
         initializeVideo();
         //requestMatchHistory();
+        if (scoreboardCard != null) {
+            scoreboardCard.setOnMouseClicked(e -> onScoreboard());
+        }
+
+        if (historyCard != null) {
+            historyCard.setOnMouseClicked(e -> onHistoryClicked());
+        }
+
+        if (createRoomCard != null) {
+            createRoomCard.setOnMouseClicked(e -> onCreateRoom());
+        }
+
+        if (joinRoomCard != null) {
+            joinRoomCard.setOnMouseClicked(e -> onJoinRoom());
+        }
     }
       private void initializeVideo() {
         try {
@@ -1055,4 +1087,170 @@ public class HomeController implements Initializable {
     }
 
 
+    @FXML
+    private void onCreateRoom() {
+        JSONObject request = new JSONObject();
+        request.put("action", "CREATE_ROOM_REQUEST");
+        clientManager.send(request);
+        addMessage("Creating room...");
+    }
+
+    @FXML
+    private void onJoinRoom() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Join Room");
+        dialog.setHeaderText("Enter Room Code");
+        dialog.setContentText("Room Code:");
+
+        dialog.showAndWait().ifPresent(roomCode -> {
+            if (!roomCode.trim().isEmpty()) {
+                JSONObject request = new JSONObject();
+                request.put("action", "JOIN_ROOM_REQUEST");
+                request.put("roomCode", roomCode.trim());
+                clientManager.send(request);
+                addMessage("Joining room " + roomCode + "...");
+            }
+        });
+    }
+
+//
+//    public void showRoomWaiting(Room room) {
+//        this.currentRoom = room;
+//
+//        Platform.runLater(() -> {
+//            try {
+//                Stage dialogStage = new Stage();
+//                dialogStage.initModality(Modality.APPLICATION_MODAL);
+//                dialogStage.setTitle("Room " + room.getRoomCode());
+//
+//                VBox vbox = new VBox(15);
+//                vbox.setPadding(new Insets(20));
+//                vbox.setAlignment(Pos.CENTER);
+//                vbox.setStyle("-fx-background-color: #2c3e50;");
+//
+//                Label titleLabel = new Label("Room Code: " + room.getRoomCode());
+//                titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
+//
+//                Label statusLabel = new Label("Waiting for players...");
+//                statusLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #ecf0f1;");
+//
+//                Label playersLabel = new Label("Players: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+//                playersLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #bdc3c7;");
+//
+//                Button leaveButton = new Button("Leave Room");
+//                leaveButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 14px;");
+//                leaveButton.setOnAction(e -> {
+//                    JSONObject request = new JSONObject();
+//                    request.put("action", "LEAVE_ROOM_REQUEST");
+//                    clientManager.send(request);
+//                });
+//
+//                vbox.getChildren().addAll(titleLabel, statusLabel, playersLabel, leaveButton);
+//
+//                Scene scene = new Scene(vbox, 400, 300);
+//                dialogStage.setScene(scene);
+//
+//                roomDialogStage = dialogStage;
+//                dialogStage.show();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//    }
+//
+//    public void updateRoomInfo(Room room, String message) {
+//        this.currentRoom = room;
+//
+//        if (!message.isEmpty()) {
+//            addMessage(message);
+//        }
+//
+//        // Cập nhật UI nếu dialog đang mở
+//        // Bạn có thể thêm logic để refresh thông tin trong dialog
+//    }
+
+    // Thêm biến để lưu UI elements
+    private Label roomPlayersLabel;
+    private Label roomStatusLabel;
+
+    public void showRoomWaiting(Room room) {
+        this.currentRoom = room;
+
+        Platform.runLater(() -> {
+            try {
+                Stage dialogStage = new Stage();
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.setTitle("Room " + room.getRoomCode());
+
+                VBox vbox = new VBox(15);
+                vbox.setPadding(new Insets(20));
+                vbox.setAlignment(Pos.CENTER);
+                vbox.setStyle("-fx-background-color: #2c3e50;");
+
+                Label titleLabel = new Label("Room Code: " + room.getRoomCode());
+                titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+                roomStatusLabel = new Label("Waiting for players...");
+                roomStatusLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #ecf0f1;");
+
+                roomPlayersLabel = new Label("Players: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+                roomPlayersLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #bdc3c7;");
+
+                Button leaveButton = new Button("Leave Room");
+                leaveButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 14px;");
+                leaveButton.setOnAction(e -> {
+                    JSONObject request = new JSONObject();
+                    request.put("action", "LEAVE_ROOM_REQUEST");
+                    clientManager.send(request);
+                });
+
+                vbox.getChildren().addAll(titleLabel, roomStatusLabel, roomPlayersLabel, leaveButton);
+
+                Scene scene = new Scene(vbox, 400, 300);
+                dialogStage.setScene(scene);
+
+                roomDialogStage = dialogStage;
+                dialogStage.show();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void updateRoomInfo(Room room, String message) {
+        this.currentRoom = room;
+
+        System.out.println("🔄 Updating room info: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+
+        Platform.runLater(() -> {
+            if (!message.isEmpty()) {
+                addMessage(message);
+            }
+
+            // 🔥 CẬP NHẬT UI
+            if (roomPlayersLabel != null) {
+                roomPlayersLabel.setText("Players: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+                System.out.println("✅ Updated players label");
+            }
+
+            if (roomStatusLabel != null) {
+                if (room.getPlayerCount() == room.getMaxPlayers()) {
+                    roomStatusLabel.setText("Game starting...");
+                    roomStatusLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+                }
+            }
+        });
+    }
+
+    public void closeRoomDialog() {
+        Platform.runLater(() -> {
+            if (roomDialogStage != null) {
+                roomDialogStage.close();
+                roomDialogStage = null;
+            }
+            currentRoom = null;
+        });
+    }
 }
