@@ -43,6 +43,7 @@ public class GameSortingController implements Initializable {
     private int roundNumber = 1;
     
     // UI Components
+    @FXML private Label currentMatch;
     @FXML private Label roomIdLabel, timeLabel, orderLabel;
     @FXML private Label userNickname, userTotalMatches, userWins, userScore;
     @FXML private Label opponentNickname, opponentTotalMatches, opponentWins, opponentScore;
@@ -78,13 +79,20 @@ public class GameSortingController implements Initializable {
     
     public void setGameData(GameData gameData) {
         this.gameData = gameData;
-        
+        Platform.runLater(() -> {
+            currentMatch.setText(safeText("ROUND: " + roundNumber, "Current Match"));
+            populateGameData();
+        });
         populateGameData();
     }
     public void updateQuestion(Question question) {
         if (gameData != null) {
             gameData.setQuestion(question);
-            roundNumber++;
+            this.roundNumber++;
+            Platform.runLater(() -> {
+                currentMatch.setText(safeText("ROUND: " + roundNumber, "Current Match"));
+                populateGameData();
+            });
             populateGameData();
         }
     }

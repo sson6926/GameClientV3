@@ -115,7 +115,7 @@
 
                     <!-- Current match info -->
                     <VBox spacing="10" styleClass="player-panel" alignment="CENTER">
-                        <Label text="CURRENT MATCH" styleClass="score-display"/>
+                        <Label fx:id="currentMatch" text="CURRENT MATCH" styleClass="score-display"/>
                         
                         <!-- Score -->
                         <HBox spacing="30" alignment="CENTER">
