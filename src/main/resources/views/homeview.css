@@ -156,3 +156,183 @@
 .status-offline {
     -fx-text-fill: #888;
 }
+
+.match-history-table {
+    -fx-font-family: "Segoe UI";
+    -fx-font-size: 12px;
+}
+
+.table-view {
+    -fx-background-color: rgba(30, 30, 30, 0.95);
+    -fx-text-fill: white;
+}
+
+.table-view .column-header {
+    -fx-background-color: rgba(50, 50, 50, 1);
+    -fx-text-fill: #00FF00;
+    -fx-font-weight: bold;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: white;
+    -fx-border-color: rgba(100, 100, 100, 0.3);
+}
+
+/* ========== Match History Dialog Styles ========== */
+.dialog-pane {
+    -fx-background-color: #121212;
+    -fx-text-fill: #e0e0e0;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #1e1e1e;
+}
+
+.dialog-pane .label {
+    -fx-text-fill: #e0e0e0;
+}
+
+/* Table styling */
+.table-view {
+    -fx-control-inner-background: #1e1e1e;
+    -fx-control-inner-background-alt: #2d2d2d;
+    -fx-background-color: #1e1e1e;
+}
+
+.table-view .column-header {
+    -fx-background-color: #37474F;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #37474F;
+}
+
+.table-view .table-cell {
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 8px;
+    -fx-border-color: #424242;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .table-row-cell {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #e0e0e0;
+    -fx-padding: 5px;
+}
+
+.table-view .table-row-cell:hover {
+    -fx-background-color: #2d2d2d;
+}
+
+.table-view .table-row-cell:selected {
+    -fx-background-color: #424242;
+    -fx-text-fill: #FFFFFF;
+}
+
+.table-view .filler {
+    -fx-background-color: #1e1e1e;
+}
+
+/* thêm css cho các nút  */
+/* ========================================
+   🎨 ACTION BUTTONS - UNIFIED DESIGN
+   ======================================== */
+
+/* Base Card Style */
+.action-button-card {
+    -fx-background-radius: 15;
+    -fx-border-radius: 15;
+    -fx-border-width: 2;
+    -fx-padding: 20 25;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 12, 0, 0, 4);
+    -fx-min-width: 130px;
+    -fx-min-height: 100px;
+    -fx-pref-width: 130px;
+    -fx-pref-height: 100px;
+}
+
+.action-button-card:hover {
+    -fx-scale-x: 1.08;
+    -fx-scale-y: 1.08;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.6), 18, 0, 0, 6);
+}
+
+.action-button-card:pressed {
+    -fx-scale-x: 0.95;
+    -fx-scale-y: 0.95;
+}
+
+/* Scoreboard Card - Blue */
+.scoreboard-card {
+    -fx-background-color: linear-gradient(to bottom right, #0078FF, #00C6FF);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+}
+
+.scoreboard-card:hover {
+    -fx-background-color: linear-gradient(to bottom right, #006EE6, #00B3E6);
+}
+
+/* History Card - Blue */
+.history-card {
+    -fx-background-color: linear-gradient(to bottom right, #0078FF, #00C6FF);
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+}
+
+.history-card:hover {
+    -fx-background-color: linear-gradient(to bottom right, #006EE6, #00B3E6);
+}
+
+/* Create Room Card - Green (Larger) */
+.create-room-card {
+    -fx-background-color: linear-gradient(to bottom right, #2ecc71, #27ae60);
+    -fx-border-color: rgba(255, 255, 255, 0.4);
+    -fx-min-width: 150px;
+    -fx-min-height: 120px;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 120px;
+}
+
+.create-room-card:hover {
+    -fx-background-color: linear-gradient(to bottom right, #27ae60, #229954);
+}
+
+/* Join Room Card - Sky Blue (Larger) */
+.join-room-card {
+    -fx-background-color: linear-gradient(to bottom right, #3498db, #2980b9);
+    -fx-border-color: rgba(255, 255, 255, 0.4);
+    -fx-min-width: 150px;
+    -fx-min-height: 120px;
+    -fx-pref-width: 150px;
+    -fx-pref-height: 120px;
+}
+
+.join-room-card:hover {
+    -fx-background-color: linear-gradient(to bottom right, #2980b9, #21618c);
+}
+
+/* Icon Styles */
+.action-icon {
+    -fx-font-size: 28px;
+    -fx-text-fill: white;
+}
+
+.action-icon-large {
+    -fx-font-size: 36px;
+    -fx-text-fill: white;
+}
+
+/* Title Styles */
+.action-title {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.action-title-large {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}

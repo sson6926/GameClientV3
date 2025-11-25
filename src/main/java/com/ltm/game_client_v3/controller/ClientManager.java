@@ -19,7 +19,8 @@ public class ClientManager {
 
     // start nhận Stage từ JavaFX Application
     public void start(Stage primaryStage) {
-        socketManager = new SocketManager("172.30.34.82", 8989, this::onMessageReceived);
+        //socketManager = new SocketManager("172.30.34.82", 8989, this::onMessageReceived);
+        socketManager = new SocketManager("localhost", 8989, this::onMessageReceived);
         System.out.println("Starting client...");
         userManager = new UserManager();
         viewManager = new ViewManager(this, primaryStage);

@@ -43,14 +43,15 @@ public class GameSortingController implements Initializable {
     private int roundNumber = 1;
     
     // UI Components
+    @FXML private Label currentMatch;
     @FXML private Label roomIdLabel, timeLabel, orderLabel;
     @FXML private Label userNickname, userTotalMatches, userWins, userScore;
     @FXML private Label opponentNickname, opponentTotalMatches, opponentWins, opponentScore;
     @FXML private Label userCurrentScore, opponentCurrentScore;
     @FXML private Label userScoreChange, opponentScoreChange;
     @FXML private Pane gameZone;
-    @FXML private VBox topRowContainer, bottomRowContainer;
-    @FXML private Line dividerLine;
+    @FXML private FlowPane topRowContainer, bottomRowContainer;
+    @FXML private Line dividerLine;   
     @FXML private Button resetButton, sendButton, continueButton, exitButton;
     @FXML private ImageView userAvatar, opponentAvatar, backgroundImage;
     
@@ -78,13 +79,20 @@ public class GameSortingController implements Initializable {
     
     public void setGameData(GameData gameData) {
         this.gameData = gameData;
-        
+        Platform.runLater(() -> {
+            currentMatch.setText(safeText("ROUND: " + roundNumber, "Current Match"));
+            populateGameData();
+        });
         populateGameData();
     }
     public void updateQuestion(Question question) {
         if (gameData != null) {
             gameData.setQuestion(question);
-            roundNumber++;
+            this.roundNumber++;
+            Platform.runLater(() -> {
+                currentMatch.setText(safeText("ROUND: " + roundNumber, "Current Match"));
+                populateGameData();
+            });
             populateGameData();
         }
     }
@@ -97,17 +105,21 @@ public class GameSortingController implements Initializable {
     }
     
     private void setupGameZone() {
+        // Setup divider line với binding
         dividerLine.setStartX(0);
-        dividerLine.setEndX(gameZone.getPrefWidth());
-        dividerLine.setStartY(300);
-        dividerLine.setEndY(300);
+        dividerLine.endXProperty().bind(gameZone.widthProperty()); // Tự động điều chỉnh
         dividerLine.getStrokeDashArray().addAll(5.0, 5.0);
         
-        topRowContainer.setPrefWidth(gameZone.getPrefWidth());
-        bottomRowContainer.setPrefWidth(gameZone.getPrefWidth());
-        topRowContainer.setAlignment(Pos.TOP_CENTER);
-        bottomRowContainer.setAlignment(Pos.TOP_CENTER);
+        // QUAN TRỌNG: Thêm listener để responsive
+        gameZone.widthProperty().addListener((obs, oldVal, newVal) -> {
+            adjustNumberBoxSizes(newVal.doubleValue());
+            
+            // Cập nhật prefWrapLength cho FlowPanes
+            topRowContainer.setPrefWrapLength(newVal.doubleValue() - 50);
+            bottomRowContainer.setPrefWrapLength(newVal.doubleValue() - 50);
+        });
     }
+    
     
     private void setupButtonStyles() {
         setupButtonHoverEffects(resetButton);
@@ -276,23 +288,19 @@ public class GameSortingController implements Initializable {
         clearGameZone();
         
         if (items == null || items.isEmpty()) {
-            items = Arrays.asList("7", "2", "1", "9", "5", "12");
+            items = Arrays.asList("7", "2", "1", "9", "5", "12", "3", "8", "4", "6");
         }
         
-        HBox topRow = createNumberRow(items, true);
-        HBox bottomRow = createNumberRow(new ArrayList<>(), false);
-        
-        topRowContainer.getChildren().add(topRow);
-        bottomRowContainer.getChildren().add(bottomRow);
+        createNumberBoxes(items, true);
     }
-    
-    private HBox createNumberRow(List<String> items, boolean isTopRow) {
-        HBox row = new HBox(BOX_SPACING);
-        row.setAlignment(Pos.CENTER);
+
+    private void createNumberBoxes(List<String> items, boolean isTopRow) {
+        // Sử dụng trực tiếp FlowPane từ FXML
+        FlowPane flowPane = isTopRow ? topRowContainer : bottomRowContainer;
         
         for (String item : items) {
             NumberBox numberBox = new NumberBox(item, isTopRow);
-            row.getChildren().add(numberBox);
+            flowPane.getChildren().add(numberBox);
             
             if (isTopRow) {
                 topRowBoxes.add(numberBox);
@@ -301,14 +309,49 @@ public class GameSortingController implements Initializable {
             }
         }
         
-        return row;
+        // Gọi hàm điều chỉnh kích thước
+        if (gameZone.getWidth() > 0) {
+            adjustNumberBoxSizes(gameZone.getWidth());
+        }
     }
-    
+
     private void clearGameZone() {
         topRowContainer.getChildren().clear();
         bottomRowContainer.getChildren().clear();
         topRowBoxes.clear();
         bottomRowBoxes.clear();
+    }
+    private void adjustNumberBoxSizes(double containerWidth) {
+        if (containerWidth <= 0) return;
+        
+        // Điều chỉnh kích thước number box dựa trên chiều rộng container
+        double boxSize;
+        double fontSize;
+        
+        if (containerWidth < 500) {
+            boxSize = 50; // Rất nhỏ
+            fontSize = 12;
+        } else if (containerWidth < 600) {
+            boxSize = 55; // Nhỏ
+            fontSize = 14;
+        } else if (containerWidth < 700) {
+            boxSize = 60; // Trung bình
+            fontSize = 15;
+        } else {
+            boxSize = 70; // Kích thước gốc
+            fontSize = 16;
+        }
+        
+        // Áp dụng cho tất cả number boxes
+        applyBoxSizes(topRowBoxes, boxSize, fontSize);
+        applyBoxSizes(bottomRowBoxes, boxSize, fontSize);
+    }
+
+    private void applyBoxSizes(List<NumberBox> boxes, double boxSize, double fontSize) {
+        for (NumberBox box : boxes) {
+            box.setPrefSize(boxSize, boxSize * 0.7);
+            box.updateFontSize(fontSize); // Cần thêm tham số fontSize
+        }
     }
     
     private void startGameTimer(int seconds) {
@@ -363,7 +406,7 @@ public class GameSortingController implements Initializable {
         boolean correct = isSortedCorrectly();
         if (correct) {
             showAlert("Exactly!", 
-                "Congratulations! You won!\nTime: " + (gameData.getQuestion().getTimeLimit() - remainingTime) + "s", 
+                "Congratulations! You're Genius OMG!\nTime: " + (gameData.getQuestion().getTimeLimit() - remainingTime) + "s", 
                 Alert.AlertType.INFORMATION);
             sendUserAnswer("CORRECT");
         } else {
@@ -731,14 +774,37 @@ public class GameSortingController implements Initializable {
         }
         
         private void setupAppearance() {
-            setPrefSize(BOX_WIDTH, BOX_HEIGHT);
+      // Sử dụng pref size thay vì fixed size
+            setPrefSize(70, 50);
+            setMinSize(50, 40);
+            setMaxSize(80, 60);
+            
             getStyleClass().add(isTopRow ? "number-box-top" : "number-box-bottom");
             
             numberLabel = new Label(value);
-            numberLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
+            updateFontSize();
             numberLabel.setTextFill(Color.BLACK);
             
             getChildren().add(numberLabel);
+        }
+        // Thêm phương thức này trong class NumberBox
+        public void updateFontSize(double fontSize) {
+            numberLabel.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
+        }
+        // Hoặc giữ phương thức cũ nhưng sửa lại
+        public void updateFontSize() {
+            double boxWidth = getPrefWidth();
+            double fontSize;
+            
+            if (boxWidth < 55) {
+                fontSize = 12;
+            } else if (boxWidth < 65) {
+                fontSize = 14;
+            } else {
+                fontSize = 16;
+            }
+            
+            numberLabel.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
         }
         
         private void setupInteractions() {
@@ -782,13 +848,14 @@ public class GameSortingController implements Initializable {
         }
         
         private void updateVisualPosition() {
-            if (getParent() instanceof HBox) {
-                ((HBox) getParent()).getChildren().remove(this);
+            // Remove from current parent
+            if (getParent() instanceof Pane) {
+                ((Pane) getParent()).getChildren().remove(this);
             }
             
-            HBox targetRow = isTopRow ? (HBox) topRowContainer.getChildren().get(0) 
-                                     : (HBox) bottomRowContainer.getChildren().get(0);
-            targetRow.getChildren().add(this);
+            // Add to appropriate flow pane
+            FlowPane targetFlowPane = isTopRow ? topRowContainer : bottomRowContainer;
+            targetFlowPane.getChildren().add(this);
         }
         
         public String getValue() {

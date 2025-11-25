@@ -1,13 +1,11 @@
 package com.ltm.game_client_v3.controller;
 
-import com.ltm.game_client_v3.models.GameData;
-import com.ltm.game_client_v3.models.MatchSummary;
-import com.ltm.game_client_v3.models.Question;
-import com.ltm.game_client_v3.models.User;
+import com.ltm.game_client_v3.models.*;
 import com.ltm.game_client_v3.views.AuthController;
 import com.ltm.game_client_v3.views.GameSortingController;
 import com.ltm.game_client_v3.views.HomeController;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,9 +80,11 @@ public class MessageHandler {
                             String nickname = userObj.optString("nickname");
                             boolean isOnline = userObj.optBoolean("isOnline");
                             boolean isPlaying = userObj.optBoolean("isPlaying");
-                            
+                            int totalMatches = userObj.getInt("totalMatches");
+                            int totalWins = userObj.getInt("totalWins");
+                            int totalScore = userObj.getInt("totalScore");
                             if (!username.equals(this.userManager.getCurrentUser().getUsername())) {
-                                User user = new User(id,username, nickname, isOnline, isPlaying);
+                                User user = new User(id,username, nickname, isOnline, isPlaying,totalMatches,totalWins,totalScore);
                                 usersList.add(user);
                             }
                             
@@ -110,22 +110,56 @@ public class MessageHandler {
                     // Nếu được chấp nhận, chờ message START_GAME từ server
                 }
             }
+//            case "START_GAME" -> {
+//                System.out.println("Starting game with data: " + msg);
+//
+//                HomeController homeController = viewManager.getHomeController();
+//                if (homeController != null) {
+//                    // Đóng tất cả dialog ở Home trước khi chuyển sang game
+//                    homeController.onLeaveHome();
+//
+//                    // Hiển thị thông báo game sắp bắt đầu
+//                    homeController.addMessage("Game is starting...");
+//                }
+//
+//                try {
+//                    GameData gameData = GameData.fromJson(msg);
+//
+//                    // In ra debug
+//                    System.out.println("Match ID: " + gameData.getMatchId());
+//                    System.out.println("Self: " + gameData.getSelf().getUsername());
+//                    System.out.println("Opponent: " + gameData.getOpponent().getUsername());
+//                    if (gameData.getQuestion() != null) {
+//                        System.out.println("Question: " + gameData.getQuestion().getInstruction());
+//                        System.out.println("Items: " + gameData.getQuestion().getItems());
+//                        System.out.println("Correct Answers: " + gameData.getQuestion().getCorrectAnswer());
+//                    }
+//
+//                    // Truyền vào view
+//                    viewManager.showGamePlay(gameData);
+//
+//                } catch (Exception e) {
+//                    System.err.println("Error parsing game data: " + e.getMessage());
+//                    e.printStackTrace();
+//                }
+//
+//            }
             case "START_GAME" -> {
                 System.out.println("Starting game with data: " + msg);
-                
+
+                // 🔥 BƯỚC 1: Đóng Room Dialog ngay lập tức
                 HomeController homeController = viewManager.getHomeController();
                 if (homeController != null) {
-                    // Đóng tất cả dialog ở Home trước khi chuyển sang game
-                    homeController.onLeaveHome();
-                    
-                    // Hiển thị thông báo game sắp bắt đầu
+                    homeController.closeRoomDialog();  // ← Đóng popup room
+                    homeController.onLeaveHome();      // ← Đóng các dialog khác
                     homeController.addMessage("Game is starting...");
                 }
 
+                // 🔥 BƯỚC 2: Parse game data
                 try {
                     GameData gameData = GameData.fromJson(msg);
-                    
-                    // In ra debug
+
+                    // Debug info
                     System.out.println("Match ID: " + gameData.getMatchId());
                     System.out.println("Self: " + gameData.getSelf().getUsername());
                     System.out.println("Opponent: " + gameData.getOpponent().getUsername());
@@ -135,14 +169,13 @@ public class MessageHandler {
                         System.out.println("Correct Answers: " + gameData.getQuestion().getCorrectAnswer());
                     }
 
-                    // Truyền vào view
+                    // 🔥 BƯỚC 3: Chuyển sang màn hình game
                     viewManager.showGamePlay(gameData);
-                    
+
                 } catch (Exception e) {
                     System.err.println("Error parsing game data: " + e.getMessage());
                     e.printStackTrace();
-                }          
-                          
+                }
             }
             case "GAME_RESULT" -> {
                 System.out.println("Received GAME_RESULT: " + msg);
@@ -207,8 +240,130 @@ public class MessageHandler {
                 Platform.runLater(() -> homeController.openScoreboardPopup(rankingArray));
             }
 
+            case "GET_MATCH_HISTORY_RESPONSE" -> {
+                String status = msg.optString("status");
+                System.out.println("GET_MATCH_HISTORY_RESPONSE received: " + status);
 
-            
+                if ("success".equals(status)) {
+                    JSONArray matchHistoryArray = msg.getJSONArray("matchHistory");
+                    int totalMatches = msg.optInt("totalMatches");
+
+                    System.out.println("Received " + totalMatches + " matches from server");
+
+                    // Convert JSONArray thành List<MatchHistory>
+                    List<com.ltm.game_client_v3.models.MatchHistory> matchHistoryList = new ArrayList<>();
+
+                    for (int i = 0; i < matchHistoryArray.length(); i++) {
+                        JSONObject matchObj = matchHistoryArray.optJSONObject(i);
+                        if (matchObj != null) {
+                            int matchId = matchObj.optInt("matchId");
+                            String opponentUsername = matchObj.optString("opponentUsername");
+                            String opponentNickname = matchObj.optString("opponentNickname");
+                            String result = matchObj.optString("result");
+                            int userTotalScore = matchObj.optInt("userTotalScore");
+                            int opponentTotalScore = matchObj.optInt("opponentTotalScore");
+                            int roundCount = matchObj.optInt("roundCount");
+
+                            LocalDateTime startTime = null;
+                            LocalDateTime endTime = null;
+                            try {
+                                String startTimeStr = matchObj.optString("startTime");
+                                String endTimeStr = matchObj.optString("endTime");
+                                if (startTimeStr != null && !startTimeStr.equals("null")) {
+                                    startTime = LocalDateTime.parse(startTimeStr);
+                                }
+                                if (endTimeStr != null && !endTimeStr.equals("null")) {
+                                    endTime = LocalDateTime.parse(endTimeStr);
+                                }
+                            } catch (Exception e) {
+                                System.err.println("Error parsing dates: " + e.getMessage());
+                            }
+
+                            com.ltm.game_client_v3.models.MatchHistory history =
+                                    new com.ltm.game_client_v3.models.MatchHistory(
+                                            matchId, opponentUsername, opponentNickname, result,
+                                            userTotalScore, opponentTotalScore, startTime, endTime, roundCount
+                                    );
+
+                            matchHistoryList.add(history);
+                            System.out.println("✓ " + history);
+                        }
+                    }
+
+                    // ✅ THÊM DÒNG NÀY - Gọi updateMatchHistory để hiển thị dialog
+                    HomeController homeController = viewManager.getHomeController();
+                    if (homeController != null) {
+                        Platform.runLater(() -> homeController.updateMatchHistory(matchHistoryList));
+                    } else {
+                        System.err.println("⚠️ HomeController is null, cannot display history");
+                    }
+                } else {
+                    System.err.println("GET_MATCH_HISTORY_RESPONSE error: " + msg.optString("message"));
+                }
+            }
+
+
+            // Thêm join phòng
+            case "CREATE_ROOM_RESPONSE" -> {
+                String status = msg.optString("status");
+                HomeController homeController = viewManager.getHomeController();
+
+                if ("success".equals(status)) {
+                    JSONObject roomJson = msg.optJSONObject("room");
+                    Room room = Room.fromJson(roomJson);
+
+                    if (homeController != null) {
+                        homeController.showRoomWaiting(room);
+                        homeController.addMessage("Room created! Code: " + room.getRoomCode());
+                    }
+                } else {
+                    if (homeController != null) {
+                        homeController.addMessage("Failed to create room: " + msg.optString("message"));
+                    }
+                }
+            }
+
+            case "JOIN_ROOM_RESPONSE" -> {
+                String status = msg.optString("status");
+                HomeController homeController = viewManager.getHomeController();
+
+                if ("success".equals(status)) {
+                    JSONObject roomJson = msg.optJSONObject("room");
+                    Room room = Room.fromJson(roomJson);
+
+                    if (homeController != null) {
+                        homeController.showRoomWaiting(room);
+                        homeController.addMessage("Joined room successfully!");
+                    }
+                } else {
+                    if (homeController != null) {
+                        homeController.addMessage("Failed to join room: " + msg.optString("message"));
+                    }
+                }
+            }
+
+            case "ROOM_UPDATED" -> {
+                JSONObject roomJson = msg.optJSONObject("room");
+                Room room = Room.fromJson(roomJson);
+                String message = msg.optString("message", "");
+
+                HomeController homeController = viewManager.getHomeController();
+                if (homeController != null) {
+                    homeController.updateRoomInfo(room, message);
+                }
+            }
+
+            case "LEAVE_ROOM_RESPONSE" -> {
+                String status = msg.optString("status");
+                HomeController homeController = viewManager.getHomeController();
+
+                if (homeController != null) {
+                    homeController.closeRoomDialog();
+                    homeController.addMessage(msg.optString("message"));
+                }
+            }
+
+
             default -> System.out.println("Unknown message type: " + action);
         }
     }

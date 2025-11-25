@@ -2,12 +2,16 @@ package com.ltm.game_client_v3.views;
 
 import com.ltm.game_client_v3.controller.ClientManager;
 import com.ltm.game_client_v3.controller.SoundManager;
+import com.ltm.game_client_v3.models.MatchHistory;
 import com.ltm.game_client_v3.models.MatchSummary;
+import com.ltm.game_client_v3.models.Room;
 import com.ltm.game_client_v3.models.User;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.PauseTransition;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.css.Match;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -29,9 +33,14 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.Duration;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.shape.Circle;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -42,6 +51,7 @@ public class HomeController implements Initializable {
 
     private ClientManager clientManager;
     private User currentUser;
+    private List<com.ltm.game_client_v3.models.MatchHistory> matchHistoryList = new ArrayList<>();
 
     @FXML private Label welcomeLabel;
     @FXML private Button playButton;
@@ -55,8 +65,24 @@ public class HomeController implements Initializable {
     private Image soundOffImg;
      @FXML
     private MediaView backgroundVideo;
+      @FXML
+    private ImageView backgroundImage;
 
     private MediaPlayer mediaPlayer;
+
+    @FXML private Button historyButton;
+
+    @FXML
+    private VBox scoreboardCard;
+
+    @FXML
+    private VBox historyCard;
+
+    @FXML
+    private VBox createRoomCard;
+
+    @FXML
+    private VBox joinRoomCard;
 
     private boolean soundOn = true;
 
@@ -65,6 +91,10 @@ public class HomeController implements Initializable {
     private Dialog<Void> currentWaitingDialog;
     private Alert currentInviteDialog;
     private String currentInviteTarget; // Lưu username đang mời
+
+    // Thêm join phòng
+    private Stage roomDialogStage;
+    private Room currentRoom;
 
     public void setClientManager(ClientManager clientManager) {
         this.clientManager = clientManager;
@@ -82,6 +112,22 @@ public class HomeController implements Initializable {
         setupPlayersList();
         setupContextMenu();
         initializeVideo();
+        //requestMatchHistory();
+        if (scoreboardCard != null) {
+            scoreboardCard.setOnMouseClicked(e -> onScoreboard());
+        }
+
+        if (historyCard != null) {
+            historyCard.setOnMouseClicked(e -> onHistoryClicked());
+        }
+
+        if (createRoomCard != null) {
+            createRoomCard.setOnMouseClicked(e -> onCreateRoom());
+        }
+
+        if (joinRoomCard != null) {
+            joinRoomCard.setOnMouseClicked(e -> onJoinRoom());
+        }
     }
       private void initializeVideo() {
         try {
@@ -107,6 +153,7 @@ public class HomeController implements Initializable {
             
             mediaPlayer.setOnError(() -> {
                 System.err.println("Video error: " + mediaPlayer.getError());
+                showBackgroundImage();
             });
             
             backgroundVideo.setMediaPlayer(mediaPlayer);
@@ -114,6 +161,38 @@ public class HomeController implements Initializable {
         } catch (Exception e) {
             System.err.println("Video initialization failed: " + e.getMessage());
             e.printStackTrace();
+            showBackgroundImage();
+        }
+    }
+    private void showBackgroundImage() {
+        try {
+            // Load ảnh nền thay thế
+            Image bgImage = new Image(getClass().getResource("/images/login-bg.jpg").toExternalForm());
+            
+            // Nếu có ImageView từ FXML, sử dụng nó
+            if (backgroundImage != null) {
+                backgroundImage.setImage(bgImage);
+                backgroundImage.setVisible(true);
+            } else {
+                // Nếu không có, tạo mới và thêm vào scene
+                backgroundImage = new ImageView(bgImage);
+                backgroundImage.setPreserveRatio(true);
+                backgroundImage.setFitWidth(backgroundVideo.getScene().getWidth());
+                backgroundImage.setFitHeight(backgroundVideo.getScene().getHeight());
+                
+                // Thêm ảnh nền vào cùng container với video
+                if (backgroundVideo.getParent() != null) {
+                    ((javafx.scene.Parent) backgroundVideo.getParent()).getChildrenUnmodifiable().add(backgroundImage);
+                }
+            }
+            
+            // Ẩn video
+            backgroundVideo.setVisible(false);
+            System.out.println("Showing background image instead of video");
+            
+        } catch (Exception e) {
+            System.err.println("Failed to load background image: " + e.getMessage());
+
         }
     }
 
@@ -310,6 +389,7 @@ public class HomeController implements Initializable {
         });
     }
 
+
     public void addMessage(String message) {
         Platform.runLater(() -> {
             messageArea.appendText(message + "\n");
@@ -333,12 +413,130 @@ public class HomeController implements Initializable {
         clientManager.send(inviteMsg);
     }
 
-    private void viewProfile(String nickname) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Player Profile");
-        alert.setHeaderText("Profile: " + nickname);
-        alert.setContentText("Player profile feature coming soon!\n\nMore statistics and achievements will be available in future updates.");
-        alert.showAndWait();
+
+ private void viewProfile(String nickname) {
+        // Tìm user được chọn từ danh sách
+        User selectedPlayer = onlinePlayersList.getItems().stream()
+                .filter(user -> user.getNickname().equals(nickname))
+                .findFirst()
+                .orElse(null);
+        
+        if (selectedPlayer == null) {
+            return;
+        }
+        
+        Platform.runLater(() -> {
+            Dialog<Void> dialog = new Dialog<>();
+            dialog.setTitle("Player Profile");
+            dialog.setHeaderText(null);
+
+            // Tính win rate
+            double winRate = 0.0;
+            if (selectedPlayer.getTotalMatches() > 0) {
+                winRate = (double) selectedPlayer.getTotalWins() / selectedPlayer.getTotalMatches() * 100;
+            }
+
+            // Tạo giao diện profile
+            VBox content = new VBox(15);
+            content.setPadding(new Insets(20));
+            content.setAlignment(Pos.TOP_CENTER);
+            content.setStyle("-fx-background-color: linear-gradient(to bottom, #667eea 0%, #764ba2 100%); -fx-background-radius: 15;");
+
+            // Avatar/Icon
+            ImageView avatar = new ImageView(new Image(getClass().getResource("/images/avatar.png").toExternalForm()));
+            avatar.setFitWidth(80);
+            avatar.setFitHeight(80);
+            avatar.setStyle("-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 5);");
+
+            // Tên người chơi
+            Label nameLabel = new Label(selectedPlayer.getNickname());
+            nameLabel.setStyle("-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 1);");
+
+            // Username
+            Label usernameLabel = new Label("@" + selectedPlayer.getUsername());
+            usernameLabel.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 14px;");
+
+            // Status
+            HBox statusBox = new HBox(10);
+            statusBox.setAlignment(Pos.CENTER);
+            
+            Label statusLabel = new Label();
+            statusLabel.setStyle("-fx-text-fill: white; -fx-font-size: 12px; -fx-padding: 5 10 5 10; -fx-background-radius: 10;");
+            
+            if (selectedPlayer.isPlaying()) {
+                statusLabel.setText("🎮 IN GAME");
+                statusLabel.setStyle(statusLabel.getStyle() + "-fx-background-color: #ff6b6b;");
+            } else if (selectedPlayer.isOnline()) {
+                statusLabel.setText("🟢 ONLINE");
+                statusLabel.setStyle(statusLabel.getStyle() + "-fx-background-color: #51cf66;");
+            } else {
+                statusLabel.setText("⚫ OFFLINE");
+                statusLabel.setStyle(statusLabel.getStyle() + "-fx-background-color: #868e96;");
+            }
+
+            statusBox.getChildren().add(statusLabel);
+
+            // Thống kê - Grid layout
+            GridPane statsGrid = new GridPane();
+            statsGrid.setHgap(15);
+            statsGrid.setVgap(10);
+            statsGrid.setAlignment(Pos.CENTER);
+            statsGrid.setPadding(new Insets(10));
+
+            // Các chỉ số thống kê
+            String[] statLabels = {"📊 Total Matches", "🏆 Total Wins", "⭐ Total Score", "📈 Win Rate"};
+            String[] statValues = {
+                String.valueOf(selectedPlayer.getTotalMatches()),
+                String.valueOf(selectedPlayer.getTotalWins()),
+                String.valueOf(selectedPlayer.getTotalScore()),
+                String.format("%.1f%%", winRate)
+            };
+
+            for (int i = 0; i < statLabels.length; i++) {
+                Label label = new Label(statLabels[i]);
+                label.setStyle("-fx-text-fill: #e0e0e0; -fx-font-size: 12px;");
+                
+                Label value = new Label(statValues[i]);
+                value.setStyle("-fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold;");
+                
+                statsGrid.add(label, 0, i);
+                statsGrid.add(value, 1, i);
+            }
+
+            // Progress bar cho win rate (thêm visual)
+            ProgressBar winRateBar = new ProgressBar(winRate / 100);
+            winRateBar.setPrefWidth(200);
+            winRateBar.setStyle("-fx-accent: " + getWinRateColor(winRate) + "; -fx-pref-height: 8px;");
+            
+            Label winRateText = new Label(String.format("Win Rate: %.1f%%", winRate));
+            winRateText.setStyle("-fx-text-fill: white; -fx-font-size: 11px;");
+
+            VBox winRateBox = new VBox(5, winRateBar, winRateText);
+            winRateBox.setAlignment(Pos.CENTER);
+
+            // Assemble content
+            content.getChildren().addAll(avatar, nameLabel, usernameLabel, statusBox, new Separator(), statsGrid, winRateBox);
+
+            dialog.getDialogPane().setContent(content);
+            dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+            
+            // Style cho dialog pane
+            dialog.getDialogPane().setStyle("-fx-background-color: transparent; -fx-border-color: #495057; -fx-border-width: 2; -fx-border-radius: 15;");
+            
+            // Ẩn nút Close mặc định và thay bằng custom button
+            Button closeButton = (Button) dialog.getDialogPane().lookupButton(ButtonType.CLOSE);
+            closeButton.setText("Close");
+            closeButton.setStyle("-fx-background-color: #ff6b6b; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 20 8 20;");
+
+            dialog.showAndWait();
+        });
+    }
+        // Helper method để chọn màu cho win rate
+    private String getWinRateColor(double winRate) {
+        if (winRate >= 70) return "#51cf66"; // Xanh lá - Cao
+        if (winRate >= 50) return "#ffd43b"; // Vàng - Trung bình
+        if (winRate >= 30) return "#ff922b"; // Cam - Thấp
+        return "#ff6b6b"; // Đỏ - Rất thấp
     }
 
     private void sendMessage(String playerName) {
@@ -594,4 +792,465 @@ public class HomeController implements Initializable {
     }
 
 
+    @FXML
+    private void onHistoryClicked() {
+        System.out.println("History button clicked");
+
+        requestMatchHistory();
+//        if (matchHistoryList == null || matchHistoryList.isEmpty()) {
+//            // Nếu chưa có dữ liệu, request từ server
+//            System.out.println("No cached data, requesting from server...");
+//            requestMatchHistory();
+//        } else {
+//            // Hiển thị popup với dữ liệu có sẵn
+//            displayMatchHistoryPopup();
+//        }
+    }
+
+    public void updateMatchHistory(List<MatchHistory> histories) {
+        this.matchHistoryList = histories;
+        System.out.println("Match history updated: " + histories.size() + " matches");
+
+        // Tự động hiển thị popup nếu là lần đầu tiên
+        displayMatchHistoryPopup();
+    }
+
+    private void requestMatchHistory() {
+        if (clientManager == null) {
+            System.err.println("⚠️ clientManager is not initialized yet");
+            return;
+        }
+        JSONObject request = new JSONObject()
+                .put("action", "GET_MATCH_HISTORY")
+                .put("limit", 20);  // Lấy 20 trận gần nhất
+
+        System.out.println("Requesting match history...");
+        clientManager.send(request);
+    }
+
+    public void showMatchHistoryDialog() {
+        if (matchHistoryList == null || matchHistoryList.isEmpty()) {
+            // Nếu chưa có dữ liệu, request từ server trước
+            requestMatchHistory();
+        } else {
+            // Hiển thị dialog với dữ liệu hiện có
+            displayMatchHistoryPopup();
+        }
+    }
+    private void displayMatchHistoryPopup() {
+        if (matchHistoryList == null || matchHistoryList.isEmpty()) {
+            showAlert("No Match History", "You don't have any match history yet.");
+            return;
+        }
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.setTitle("📊 Match History");
+        dialog.setResizable(true);
+        dialog.setWidth(1100);
+        dialog.setHeight(650);
+
+        // ✅ Tạo TableView
+        TableView<MatchHistory> table = new TableView<>();
+        table.setPrefHeight(500);
+        table.setStyle(
+                "-fx-control-inner-background: #FFFFFF;" +
+                        "-fx-control-inner-background-alt: #F5F5F5;" +
+                        "-fx-text-fill: #000000;" +
+                        "-fx-font-family: 'Segoe UI';" +
+                        "-fx-font-size: 12px;"
+        );
+
+        // Column 1: # (Index)
+        TableColumn<MatchHistory, String> indexCol = new TableColumn<>("#");
+        indexCol.setPrefWidth(40);
+        indexCol.setMinWidth(40);
+        indexCol.setCellValueFactory((cellData) -> {
+            int index = table.getItems().indexOf(cellData.getValue()) + 1;
+            return new javafx.beans.property.SimpleStringProperty(String.valueOf(index));
+        });
+        indexCol.setCellFactory(column -> new TableCell<MatchHistory, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setStyle("-fx-alignment: CENTER; -fx-text-fill: #666666; -fx-font-weight: bold;");
+                }
+            }
+        });
+
+        // Column 2: Opponent
+        TableColumn<MatchHistory, String> opponentCol = new TableColumn<>("Opponent");
+        opponentCol.setPrefWidth(150);
+        opponentCol.setMinWidth(120);
+        opponentCol.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getOpponentNickname())
+        );
+        opponentCol.setCellFactory(column -> new TableCell<MatchHistory, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setStyle("-fx-text-fill: #1976D2; -fx-font-weight: bold; -fx-alignment: CENTER_LEFT;");
+                }
+            }
+        });
+
+        // Column 3: Result
+        TableColumn<MatchHistory, String> resultCol = new TableColumn<>("Result");
+        resultCol.setPrefWidth(80);
+        resultCol.setMinWidth(70);
+        resultCol.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(cellData.getValue().getResult())
+        );
+        resultCol.setCellFactory(column -> new TableCell<MatchHistory, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(item);
+                    if ("WIN".equals(item)) {
+                        setStyle("-fx-text-fill: #FFFFFF; -fx-background-color: #4CAF50; -fx-font-weight: bold; -fx-alignment: CENTER;");
+                    } else if ("LOSS".equals(item)) {
+                        setStyle("-fx-text-fill: #FFFFFF; -fx-background-color: #F44336; -fx-font-weight: bold; -fx-alignment: CENTER;");
+                    } else {
+                        setStyle("-fx-text-fill: #FFFFFF; -fx-background-color: #FF9800; -fx-font-weight: bold; -fx-alignment: CENTER;");
+                    }
+                }
+            }
+        });
+
+        // Column 4: Your Score
+        TableColumn<MatchHistory, String> yourScoreCol = new TableColumn<>("Your Score");
+        yourScoreCol.setPrefWidth(100);
+        yourScoreCol.setMinWidth(90);
+        yourScoreCol.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(
+                        String.valueOf(cellData.getValue().getUserTotalScore())
+                )
+        );
+        yourScoreCol.setCellFactory(column -> new TableCell<MatchHistory, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setStyle("-fx-text-fill: #2196F3; -fx-font-weight: bold; -fx-alignment: CENTER;");
+                }
+            }
+        });
+
+        // Column 5: Opponent Score
+        TableColumn<MatchHistory, String> opponentScoreCol = new TableColumn<>("Opp Score");
+        opponentScoreCol.setPrefWidth(100);
+        opponentScoreCol.setMinWidth(90);
+        opponentScoreCol.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(
+                        String.valueOf(cellData.getValue().getOpponentTotalScore())
+                )
+        );
+        opponentScoreCol.setCellFactory(column -> new TableCell<MatchHistory, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setStyle("-fx-text-fill: #666666; -fx-alignment: CENTER;");
+                }
+            }
+        });
+
+        // Column 6: Rounds
+        TableColumn<MatchHistory, String> roundsCol = new TableColumn<>("Rounds");
+        roundsCol.setPrefWidth(80);
+        roundsCol.setMinWidth(70);
+        roundsCol.setCellValueFactory(cellData ->
+                new javafx.beans.property.SimpleStringProperty(
+                        String.valueOf(cellData.getValue().getRoundCount())
+                )
+        );
+        roundsCol.setCellFactory(column -> new TableCell<MatchHistory, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setStyle("-fx-text-fill: #4CAF50; -fx-alignment: CENTER;");
+                }
+            }
+        });
+
+        // Column 7: Date
+        TableColumn<MatchHistory, String> dateCol = new TableColumn<>("Date");
+        dateCol.setPrefWidth(200);
+        dateCol.setMinWidth(180);
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("HH:mm:ss dd/MM/yyyy");
+        dateCol.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getStartTime() != null) {
+                return new javafx.beans.property.SimpleStringProperty(
+                        cellData.getValue().getStartTime().format(dateFormatter)
+                );
+            }
+            return new javafx.beans.property.SimpleStringProperty("—");
+        });
+        dateCol.setCellFactory(column -> new TableCell<MatchHistory, String>() {
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item);
+                    setStyle("-fx-text-fill: #999999; -fx-font-size: 11px; -fx-alignment: CENTER_LEFT;");
+                }
+            }
+        });
+
+        // Thêm columns
+        table.getColumns().addAll(indexCol, opponentCol, resultCol, yourScoreCol,
+                opponentScoreCol, roundsCol, dateCol);
+
+        // Thêm dữ liệu vào table
+        ObservableList<MatchHistory> data = FXCollections.observableArrayList(matchHistoryList);
+        table.setItems(data);
+
+        // ✅ Tạo VBox - Style sáng sủa như Scoreboard
+        VBox mainContent = new VBox(10);
+        mainContent.setStyle("-fx-background-color: #0A1428; -fx-padding: 20px;");
+
+        // Header
+        Label headerLabel = new Label("⚔ MATCH HISTORY");
+        headerLabel.setStyle(
+                "-fx-text-fill: #00BFFF;" +
+                        "-fx-font-size: 24px;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-text-alignment: CENTER;"
+        );
+
+        Label statsLabel = new Label("Total Matches: " + matchHistoryList.size());
+        statsLabel.setStyle(
+                "-fx-text-fill: #CCCCCC;" +
+                        "-fx-font-size: 13px;"
+        );
+
+        VBox headerBox = new VBox(8);
+        headerBox.setStyle("-fx-alignment: CENTER;");
+        headerBox.getChildren().addAll(headerLabel, statsLabel);
+
+        // Table container
+        VBox tableContainer = new VBox(table);
+        tableContainer.setStyle("-fx-border-color: #CCCCCC; -fx-border-width: 1; -fx-padding: 0;");
+        VBox.setVgrow(tableContainer, javafx.scene.layout.Priority.ALWAYS);
+        VBox.setVgrow(table, javafx.scene.layout.Priority.ALWAYS);
+
+        mainContent.getChildren().addAll(headerBox, tableContainer);
+        VBox.setVgrow(tableContainer, javafx.scene.layout.Priority.ALWAYS);
+
+        // Thiết lập dialog
+        dialog.getDialogPane().setContent(mainContent);
+        dialog.getDialogPane().setStyle("-fx-background-color: #0A1428;");
+
+        ButtonType closeButton = new ButtonType("Close", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().add(closeButton);
+
+        dialog.showAndWait();
+    }
+
+
+
+
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    // ✅ THÊM METHOD NÀY
+    public void setupAfterClientManager() {
+        System.out.println("Setup after ClientManager initialized");
+        //requestMatchHistory();
+    }
+
+
+    @FXML
+    private void onCreateRoom() {
+        JSONObject request = new JSONObject();
+        request.put("action", "CREATE_ROOM_REQUEST");
+        clientManager.send(request);
+        addMessage("Creating room...");
+    }
+
+    @FXML
+    private void onJoinRoom() {
+        TextInputDialog dialog = new TextInputDialog();
+        dialog.setTitle("Join Room");
+        dialog.setHeaderText("Enter Room Code");
+        dialog.setContentText("Room Code:");
+
+        dialog.showAndWait().ifPresent(roomCode -> {
+            if (!roomCode.trim().isEmpty()) {
+                JSONObject request = new JSONObject();
+                request.put("action", "JOIN_ROOM_REQUEST");
+                request.put("roomCode", roomCode.trim());
+                clientManager.send(request);
+                addMessage("Joining room " + roomCode + "...");
+            }
+        });
+    }
+
+//
+//    public void showRoomWaiting(Room room) {
+//        this.currentRoom = room;
+//
+//        Platform.runLater(() -> {
+//            try {
+//                Stage dialogStage = new Stage();
+//                dialogStage.initModality(Modality.APPLICATION_MODAL);
+//                dialogStage.setTitle("Room " + room.getRoomCode());
+//
+//                VBox vbox = new VBox(15);
+//                vbox.setPadding(new Insets(20));
+//                vbox.setAlignment(Pos.CENTER);
+//                vbox.setStyle("-fx-background-color: #2c3e50;");
+//
+//                Label titleLabel = new Label("Room Code: " + room.getRoomCode());
+//                titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
+//
+//                Label statusLabel = new Label("Waiting for players...");
+//                statusLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #ecf0f1;");
+//
+//                Label playersLabel = new Label("Players: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+//                playersLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #bdc3c7;");
+//
+//                Button leaveButton = new Button("Leave Room");
+//                leaveButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 14px;");
+//                leaveButton.setOnAction(e -> {
+//                    JSONObject request = new JSONObject();
+//                    request.put("action", "LEAVE_ROOM_REQUEST");
+//                    clientManager.send(request);
+//                });
+//
+//                vbox.getChildren().addAll(titleLabel, statusLabel, playersLabel, leaveButton);
+//
+//                Scene scene = new Scene(vbox, 400, 300);
+//                dialogStage.setScene(scene);
+//
+//                roomDialogStage = dialogStage;
+//                dialogStage.show();
+//
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//    }
+//
+//    public void updateRoomInfo(Room room, String message) {
+//        this.currentRoom = room;
+//
+//        if (!message.isEmpty()) {
+//            addMessage(message);
+//        }
+//
+//        // Cập nhật UI nếu dialog đang mở
+//        // Bạn có thể thêm logic để refresh thông tin trong dialog
+//    }
+
+    // Thêm biến để lưu UI elements
+    private Label roomPlayersLabel;
+    private Label roomStatusLabel;
+
+    public void showRoomWaiting(Room room) {
+        this.currentRoom = room;
+
+        Platform.runLater(() -> {
+            try {
+                Stage dialogStage = new Stage();
+                dialogStage.initModality(Modality.APPLICATION_MODAL);
+                dialogStage.setTitle("Room " + room.getRoomCode());
+
+                VBox vbox = new VBox(15);
+                vbox.setPadding(new Insets(20));
+                vbox.setAlignment(Pos.CENTER);
+                vbox.setStyle("-fx-background-color: #2c3e50;");
+
+                Label titleLabel = new Label("Room Code: " + room.getRoomCode());
+                titleLabel.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: white;");
+
+                roomStatusLabel = new Label("Waiting for players...");
+                roomStatusLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #ecf0f1;");
+
+                roomPlayersLabel = new Label("Players: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+                roomPlayersLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #bdc3c7;");
+
+                Button leaveButton = new Button("Leave Room");
+                leaveButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 14px;");
+                leaveButton.setOnAction(e -> {
+                    JSONObject request = new JSONObject();
+                    request.put("action", "LEAVE_ROOM_REQUEST");
+                    clientManager.send(request);
+                });
+
+                vbox.getChildren().addAll(titleLabel, roomStatusLabel, roomPlayersLabel, leaveButton);
+
+                Scene scene = new Scene(vbox, 400, 300);
+                dialogStage.setScene(scene);
+
+                roomDialogStage = dialogStage;
+                dialogStage.show();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    public void updateRoomInfo(Room room, String message) {
+        this.currentRoom = room;
+
+        System.out.println("🔄 Updating room info: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+
+        Platform.runLater(() -> {
+            if (!message.isEmpty()) {
+                addMessage(message);
+            }
+
+            // 🔥 CẬP NHẬT UI
+            if (roomPlayersLabel != null) {
+                roomPlayersLabel.setText("Players: " + room.getPlayerCount() + "/" + room.getMaxPlayers());
+                System.out.println("✅ Updated players label");
+            }
+
+            if (roomStatusLabel != null) {
+                if (room.getPlayerCount() == room.getMaxPlayers()) {
+                    roomStatusLabel.setText("Game starting...");
+                    roomStatusLabel.setStyle("-fx-font-size: 16px; -fx-text-fill: #2ecc71; -fx-font-weight: bold;");
+                }
+            }
+        });
+    }
+
+    public void closeRoomDialog() {
+        Platform.runLater(() -> {
+            if (roomDialogStage != null) {
+                roomDialogStage.close();
+                roomDialogStage = null;
+            }
+            currentRoom = null;
+        });
+    }
 }
