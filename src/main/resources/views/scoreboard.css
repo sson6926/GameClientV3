@@ -1,0 +1,187 @@
+/* 🌟 WOW Scoreboard Theme - Premium Dark Neon */
+
+/* ===== ROOT BACKGROUND ===== */
+.anchor-pane {
+    -fx-background-color: linear-gradient(to bottom, #0a0f2d, #001a33);
+    -fx-background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%2300f2fe' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+}
+
+/* ===== TITLE STYLES ===== */
+.label {
+    -fx-text-fill: linear-gradient(to right, #00F2FE, #4FACFE, #00F2FE);
+    -fx-font-size: 32px;
+    -fx-font-weight: bolder;
+    -fx-effect: dropshadow(gaussian, rgba(0,242,254,0.9), 20, 0.8, 0, 2);
+    -fx-alignment: CENTER;
+}
+
+/* ===== PREMIUM TABLE CONTAINER ===== */
+.table-view {
+    -fx-background-color: rgba(10, 15, 45, 0.6);
+    -fx-background-radius: 15;
+    -fx-border-color: linear-gradient(to right, rgba(0,242,254,0.4), rgba(79,172,254,0.4), rgba(0,242,254,0.4));
+    -fx-border-radius: 15;
+    -fx-border-width: 1.5;
+    -fx-effect: dropshadow(gaussian, rgba(0,242,254,0.3), 30, 0.6, 0, 0);
+    -fx-padding: 0;
+}
+
+/* ===== TABLE HEADER - GLASS MORPHISM ===== */
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to right, rgba(0,242,254,0.8), rgba(79,172,254,0.8));
+    -fx-background-radius: 12 12 0 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,242,254,0.4), 10, 0.5, 0, 2);
+    -fx-padding: 8 0 8 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: white;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 3, 0.3, 1, 1);
+}
+
+/* ===== TABLE ROWS - MODERN STYLING ===== */
+.table-row-cell {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: #e0f7ff;
+    -fx-font-size: 14px;
+    -fx-font-weight: 500;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: rgba(255,255,255,0.03);
+}
+
+.table-row-cell:even {
+    -fx-background-color: rgba(255,255,255,0.01);
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: linear-gradient(to right, rgba(0,242,254,0.15), rgba(79,172,254,0.15));
+    -fx-text-fill: #ffffff;
+    -fx-cursor: hand;
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: linear-gradient(to right, rgba(0,242,254,0.3), rgba(79,172,254,0.3));
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* ===== TABLE CELLS ===== */
+.table-cell {
+    -fx-text-fill: #e0f7ff;
+    -fx-alignment: CENTER;
+    -fx-border-color: transparent;
+    -fx-padding: 12 8 12 8;
+    -fx-font-size: 13px;
+}
+
+/* Highlight first place */
+.table-row-cell:first-child .table-cell {
+    -fx-text-fill: #FFD700;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.5), 5, 0.5, 0, 1);
+}
+
+/* Highlight second place */
+.table-row-cell:nth-child(2) .table-cell {
+    -fx-text-fill: #C0C0C0;
+    -fx-font-weight: bold;
+}
+
+/* Highlight third place */
+.table-row-cell:nth-child(3) .table-cell {
+    -fx-text-fill: #CD7F32;
+    -fx-font-weight: bold;
+}
+
+/* ===== BUTTON STYLES ===== */
+.button {
+    -fx-pref-width: 160;
+    -fx-pref-height: 48;
+    -fx-background-radius: 12;
+    -fx-background-color: linear-gradient(to right, #667eea, #764ba2);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.5), 15, 0.5, 0, 3);
+    -fx-cursor: hand;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 12;
+    -fx-transition: all 0.3s ease;
+}
+
+.button:hover {
+    -fx-background-color: linear-gradient(to right, #764ba2, #667eea);
+    -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.8), 20, 0.7, 0, 5);
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-text-fill: #ffffff;
+}
+
+.button:pressed {
+    -fx-background-color: linear-gradient(to right, #5a6fd8, #6a4590);
+    -fx-effect: dropshadow(gaussian, rgba(102,126,234,0.3), 10, 0.3, 0, 2);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* ===== SCROLLBAR STYLING ===== */
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.scroll-bar:vertical .track,
+.scroll-bar:horizontal .track {
+    -fx-background-color: rgba(255,255,255,0.05);
+    -fx-border-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: linear-gradient(to bottom, rgba(0,242,254,0.6), rgba(79,172,254,0.6));
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-effect: dropshadow(gaussian, rgba(0,242,254,0.4), 5, 0.3, 0, 1);
+}
+
+.scroll-bar:vertical .thumb:hover,
+.scroll-bar:horizontal .thumb:hover {
+    -fx-background-color: linear-gradient(to bottom, rgba(0,242,254,0.8), rgba(79,172,254,0.8));
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 2;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-background-color: rgba(0,242,254,0.8);
+}
+
+/* ===== GLOW ANIMATION FOR TOP PLAYERS ===== */
+@keyframes glow {
+    0% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 5, 0.5, 0, 1); }
+    50% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.7), 8, 0.7, 0, 1); }
+    100% { -fx-effect: dropshadow(gaussian, rgba(255,215,0,0.3), 5, 0.5, 0, 1); }
+}
+
+.table-row-cell:first-child {
+    -fx-animation: glow 2s infinite;
+}
